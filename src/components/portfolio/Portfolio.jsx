@@ -64,7 +64,7 @@ function Portfolio() {
                 </div>
                 <h3>{title}</h3>
                 <div className="portfolio__item-cta">
-                  <a href={github} target="_blank" className="btn">Github</a>
+                  <a href={github} target="_blank" rel="noreferrer" className="btn">Github</a>
                 </div>
               </article>
             )

@@ -2,7 +2,6 @@ import React from "react"
 import './contact.css'
 import { HiOutlineMail } from "react-icons/hi"
 import { RiMessengerLine } from "react-icons/ri"
-import { FaWhatsapp } from "react-icons/fa"
 import { useRef } from 'react';
 import emailjs from 'emailjs-com';
 
@@ -26,27 +25,66 @@ const Contact = () => {
 
       <div className="container contact__container">
         <div className="contact__options">
-          <article className="contact__option">
-            < HiOutlineMail className="contact__option-icon" />
-            <h4>Email</h4>
-            <h5>random@gmail.com</h5>
-            <a href="mailto:buitragoivancamilo1025@gmail.com" target="_blank"> Send a Message </a>
-          </article>
+          <div className="contact__option">
+            <a
+              href="mailto:buitragoivancamilo1025@gmail.com"
+              rel="noreferrer"
+              target="_blank">
+              < HiOutlineMail className="contact__option-icon" />
+              <h4>Email</h4>
+              <h5>buitragoivancamilo1025@gmail.com</h5>
+              Send a Message
+            </a>
+          </div>
 
-          <article className="contact__option">
-            < RiMessengerLine className="contact__option-icon" />
-            <h4>Messenger</h4>
-            <h5>Code_NNature</h5>
-            <a href="https://m.me/ivan.buitrago.988/" target="_blank"> Enviar mensaje </a>
-          </article>
+          <div className="contact__option">
+            <a
+              href="https://m.me/ivan.buitrago.988/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              < RiMessengerLine className="contact__option-icon" />
+              <h4>Messenger</h4>
+              <h5>Iván Camilo</h5>
+              Enviar mensaje
+            </a>
+          </div>
         </div>
 
         {/* END OF CONTACT OPTIONS */}
 
         <form ref={form} onSubmit={sendEmail} autoComplete="off">
-          <input type="text" name="name" placeholder="Your Full Name" required id="" />
-          <input type="email" name="email" placeholder="Your Email" required id="" />
-          <textarea name="message" id="" cols="" rows="7" placeholder="Your Message" required></textarea>
+          <div className="contact_form-div">
+            <label htmlFor="">Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Full Name"
+              required
+              id=""
+            />
+          </div>
+          <div className="contact_form-div">
+            <label htmlFor="">email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              required
+              id=""
+            />
+          </div>
+          <div className="contact_form-div">
+            <label htmlFor="">Message</label>
+            <textarea
+              name="message"
+              id=""
+              cols=""
+              rows="7"
+              placeholder="Your Message"
+              required>
+            </textarea>
+          </div>
           <button type="submit" className="btn btn-primary">Enviar mensaje</button>
         </form>
       </div>
