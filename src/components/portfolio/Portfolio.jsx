@@ -14,37 +14,37 @@ const data = [
     id: 1,
     image: IMG1,
     title: 'Parallax calculator',
-    github: 'https://github.com'
+    github: 'https://github.com/codigo-natural/calculadora'
   },
   {
     id: 2,
     image: IMG2,
     title: 'Glassmorphism watch',
-    github: 'https://github.com'
+    github: 'https://github.com/codigo-natural/clock_glassmorphism'
   },
   {
     id: 3,
     image: IMG3,
     title: 'Game three in stripe',
-    github: 'https://github.com'
+    github: 'https://github.com/codigo-natural/Juego-tres-en-raya'
   },
   {
     id: 4,
     image: IMG4,
     title: 'Contact form',
-    github: 'https://github.com'
+    github: 'https://github.com/codigo-natural/Form-Contact'
   },
   {
     id: 5,
     image: IMG5,
     title: 'Cripto Dashboard',
-    github: 'https://github.com'
+    github: 'https://github.com/codigo-natural/crypto-dashboard-react-personalizado'
   },
   {
     id: 6,
     image: IMG6,
     title: 'Cofee shop website',
-    github: 'https://github.com'
+    github: 'https://github.com/codigo-natural/web-coffee'
   }
 ]
 
