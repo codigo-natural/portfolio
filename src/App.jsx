@@ -1,25 +1,18 @@
-
 import React from "react";
-import Header from './components/header/Header';
-import Nav from './components/nav/Nav';
-import About from './components/about/About';
-import Experience from './components/experience/Experience';
-import Portfolio from './components/portfolio/Portfolio';
-// import Contact from './components/contact/Contact';
-import Footer from './components/footer/Footer';
+import { Header } from "./components/Header";
+import { Hero } from "./components/Hero";
+import { Skills } from "./components/Skills";
+import { Projects } from "./components/Projects";
+import { Footer } from "./components/Footer";
 
-const App = () => {
+export const App = () => {
     return (
-        <> 
+        <div className="pt-[4.75rem] lg:pt-[5.25rem] overflow-hidden">
             <Header />
-            <Nav />
-            <About />
-            <Experience />
-            <Portfolio />
-            {/* <Contact /> */}
+            <Hero />
+            <Skills />
+            <Projects />
             <Footer />
-        </>
+        </div>
     )
 }
-
-export default App
