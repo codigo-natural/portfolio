@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { contactSocialMedia } from '../constants';
+import { Send, MapPin, Phone, Mail, User } from 'lucide-react';
+// Necesitarás instalar emailjs-com
+import emailjs from 'emailjs-com';
 
 export const Footer = () => {
   const [formData, setFormData] = useState({
@@ -7,6 +9,8 @@ export const Footer = () => {
     email: '',
     message: '',
   });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,93 +20,124 @@ export const Footer = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Formulario enviado:', formData);
-    setFormData({
-      name: '',
-      email: '',
-      message: '',
-    });
+    try {
+      await emailjs.send(
+        'portfolio contact ', // Reemplazar con tu ID de servicio de EmailJS
+        'template_7kfn0sg', // Reemplazar con tu ID de plantilla
+        formData,
+        '18L-HqxP-qP0gwWPn' // Reemplazar con tu clave pública de EmailJS
+      );
+      setIsSubmitted(true);
+      setFormData({
+        name: '',
+        email: '',
+        message: '',
+      });
+      setTimeout(() => setIsSubmitted(false), 5000); // Restaurar estado después de 5 segundos
+    } catch (error) {
+      setError('Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.');
+      console.error('Error al enviar el correo:', error);
+    }
   };
 
   return (
-    <div className="container mx-auto p-6 rounded-lg shadow-md" id='contact'>
-      <h2 className="h2 text-center mb-12">Contacto</h2>
-      <div className='relative grid gap-6 md:grid-cols-2 md:gap-4 md:pb-[7rem] '>
-        <div className='w-[19rem] max-lg:w-full h-full px-6 border border-n-6 rounded-[2rem] lg:w-auto even:py-14 odd:py-8 odd:my-4 [&>h4]:first:text-color-2 [&>h4]:even:text-color-1 [&>h4]:last:text-color-3'>
-          <h3 className='text-color-2'>¡Hablemos!</h3>
-          <p>Estoy emocionado de conocerte y hablar sobre tus ideas y proyectos. Contáctame para obtener más información, discutir oportunidades de colaboración o recibir asesoramiento en cualquier área.</p>
-          <p>¡Espero tu mensaje para empezar!</p>
-          <br />
-          <ul className="flex items-center justify-between">
-            {contactSocialMedia.map((item, index) => (
-              <li
-                key={index}
-                className="rounded-2xl flex items-center justify-center
-                    p-0.25 md:w-[4.5rem] md:h-[4.5rem]
-                    w-10 h-10"
+    // <div className="relative min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
+    <div className="relative min-h-screen text-gray-100">
+      <div className="absolute inset-0 opacity-5 pointer-events-none">
+        {/* <div
+          className="h-full w-full"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30L30 0z' fill='%23ffffff'/%3E%3C/svg%3E")`,
+            backgroundSize: '60px 60px',
+          }}
+        ></div> */}
+      </div>
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl font-bold mb-4 text-amber-500">Contáctanos</h2>
+            <p className="text-gray-400">Desde las montañas de Boyacá hasta tu bandeja de entrada</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="space-y-6">
+              <div className="flex items-center space-x-4 group">
+                <div className="p-3 bg-gray-800 rounded-lg group-hover:bg-amber-500 transition-colors duration-300">
+                  <MapPin className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Ubicación</h3>
+                  <p className="text-gray-400">Boyacá, Colombia</p>
+                </div>
+              </div>
+              {/* <div className="flex items-center space-x-4 group">
+                <div className="p-3 bg-gray-800 rounded-lg group-hover:bg-amber-500 transition-colors duration-300">
+                  <Phone className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Teléfono</h3>
+                  <p className="text-gray-400">+57 3204833432</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4 group">
+                <div className="p-3 bg-gray-800 rounded-lg group-hover:bg-amber-500 transition-colors duration-300">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-medium">Email</h3>
+                  <p className="text-gray-400">contacto-ivancamilo@gmail.com</p>
+                </div>
+              </div> */}
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Nombre"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 transition-colors duration-300"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
+                <User className="absolute right-3 top-3 w-5 h-5 text-gray-500" />
+              </div>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 transition-colors duration-300"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                <Mail className="absolute right-3 top-3 w-5 h-5 text-gray-500" />
+              </div>
+              <div>
+                <textarea
+                  name="message"
+                  placeholder="Mensaje"
+                  rows={4}
+                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-amber-500 transition-colors duration-300"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-medium py-3 px-6 rounded-lg flex items-center justify-center space-x-2 transition-all duration-300 transform hover:scale-105"
               >
-                <a
-                  key={index}
-                  href={item.url}
-                  className="flex items-center justify-center w-full h-full bg-n-5 rounded-[1rem]"
-                >
-                  <img
-                    src={item.icon}
-                    width={40}
-                    height={40}
-                    alt={item}
-                  />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Nombre"
-                className="block w-full px-4 py-2 border rounded-md bg-transparent focus:outline-none focus:border-blue-500"
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-                className="block w-full px-4 py-2 border rounded-md bg-transparent focus:outline-none focus:border-blue-500"
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Mensaje"
-                rows={4}
-                className="block w-full px-4 py-2 border rounded-md bg-transparent focus:outline-none focus:border-blue-500"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
-            >
-              Enviar
-            </button>
-          </form>
+                <span>{isSubmitted ? '¡Mensaje Enviado!' : 'Enviar Mensaje'}</span>
+                <Send className="w-5 h-5" />
+              </button>
+              {error && <p className="text-red-500 text-center">{error}</p>}
+            </form>
+          </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
