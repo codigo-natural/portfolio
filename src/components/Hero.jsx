@@ -24,13 +24,13 @@ export const Hero = () => {
           </span>
         </h1>
         <p className="body-1 max-w-3xl mx-auto mb-6 text-n-2 lg:mb-8">¡Bienvenido al portafolio de camilo_dev, donde las ideas y la creatividad cobran vida en línea!</p>
-        <div className="group relative w-[320px] h-[200px] bg-gray-300 rounded-[30px] overflow-hidden shadow-lg transition-all duration-1000 ease-in-out border-2 border-white hover:scale-110">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#4158D0] via-[#C850C0] to-[#FFCC70]"></div>
+        <div className="group relative w-[420px] h-[300px] bg-gray-300 rounded-[30px] overflow-hidden shadow-lg transition-all duration-1000 ease-in-out border-2 border-white hover:scale-110 bg-cover bg-center" >
+          <div className="inset-0 bg-gradient-to-br from-[#4158D0] via-[#C850C0] to-[#FFCC70]"></div>
 
-          <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 transition-all duration-600 ease-in-out text-lg font-semibold text-white tracking-[3px] group-hover:translate-x-[70px] group-hover:-translate-y-[52px] group-hover:tracking-[0px]">
-            Socials
+          {/* <div className="absolute right-1/2 bottom-1/2 translate-x-1/2 translate-y-1/2 transition-all duration-600 ease-in-out text-lg font-semibold text-white tracking-[3px] group-hover:translate-x-[70px] group-hover:-translate-y-[52px] group-hover:tracking-[0px]"> */}
+          <div className="absolute inset-0 bg-cover text-black " style={{ backgroundImage: "url('./profile.png')" }}>
           </div>
-          <a href={contactSocialMedia.github.url} className="block">
+          <a href={contactSocialMedia.github.url} target="_blank" rel="noreferrer" className="block">
             <div className="absolute w-[70%] h-[70%] -bottom-[70%] -left-[70%] p-2.5 text-right bg-white/40 border-t-2 border-r border-white rounded-[10%_13%_42%_0%/10%_12%_75%_0%] shadow-[-7px_7px_29px_0px_rgba(100,100,111,0.364)] origin-bottom-left transition-all duration-1000 ease-in-out group-hover:-bottom-[1px] group-hover:-left-[1px] hover:bg-gradient-to-br hover:from-[#fdf497] hover:via-[#ff53d4] hover:to-[#62c2fe]">
               <span className="inline-block w-5 h-5">
                 <img
