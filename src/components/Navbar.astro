@@ -1,0 +1,404 @@
+---
+// Puedes pasar `initialActiveIndex` como prop si quieres controlar cuál tab está activo al inicio.
+// Ejemplo: export let initialActiveIndex = 0;
+// Por ahora, se basa en el atributo data-active="true" en el HTML.
+
+// Elementos decorativos (opcionales, puedes eliminarlos si no los quieres)
+const showDecorativeElements = true
+---
+
+<nav class='navbar'>
+  <ul aria-hidden='true' class='lit'>
+    <li class='text-2xl font-bold'>About</li>
+    <li class='text-2xl font-bold'>Projects</li>
+    <li class='text-2xl font-bold'>Contact</li>
+    <!-- <li class='text-2xl font-bold'>Subscribe</li> -->
+  </ul>
+  <ul class='content'>
+    <li class='text-2xl font-bold'>
+      <a data-active='true' href='#about'><span>About</span></a>
+    </li>
+    <li class='text-2xl font-bold'>
+      <a href='#projects'><span>Projects</span></a>
+    </li>
+    <li class='text-2xl font-bold'>
+      <a href='#contact'><span>Contact</span></a>
+    </li>
+    <!-- <li class='text-2xl font-bold'>
+      <a href='#subscribe'><span>Subscribe</span></a>
+    </li> -->
+  </ul>
+</nav>
+
+<!-- SVG Filters for lighting effects -->
+<svg class='sr-only'>
+  <filter id='spotlight'>
+    <feGaussianBlur in='SourceAlpha' stdDeviation='0.8' result='blur'
+    ></feGaussianBlur>
+    <feSpecularLighting
+      result='lighting'
+      in='blur'
+      surfaceScale='0.5'
+      specularConstant='6'
+      specularExponent='65'
+      lighting-color='hsla(234, 100%, 100%, 0.5)'
+    >
+      <fePointLight x='50' y='-50' z='200'></fePointLight>
+    </feSpecularLighting>
+    <feComposite
+      in='lighting'
+      in2='SourceAlpha'
+      operator='in'
+      result='composite'></feComposite>
+    <feComposite
+      in='SourceGraphic'
+      in2='composite'
+      operator='arithmetic'
+      k1='0'
+      k2='1'
+      k3='1'
+      k4='0'
+      result='litPaint'></feComposite>
+  </filter>
+
+  <filter id='ambience'>
+    <feGaussianBlur in='SourceAlpha' stdDeviation='0.8' result='blur'
+    ></feGaussianBlur>
+    <feSpecularLighting
+      result='lighting'
+      in='blur'
+      surfaceScale='0.5'
+      specularConstant='25'
+      specularExponent='65'
+      lighting-color='hsla(234, 100%, 100%, 0.3)'
+    >
+      <fePointLight x='120' y='-154' z='160'></fePointLight>
+    </feSpecularLighting>
+    <feComposite
+      in='lighting'
+      in2='SourceAlpha'
+      operator='in'
+      result='composite'></feComposite>
+    <feComposite
+      in='SourceGraphic'
+      in2='composite'
+      operator='arithmetic'
+      k1='0'
+      k2='1'
+      k3='1'
+      k4='0'
+      result='litPaint'></feComposite>
+  </filter>
+</svg>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
+
+  gsap.registerPlugin(ScrollToPlugin)
+  // Configuración constante para los efectos de iluminación
+  const LIGHTING_CONFIG = {
+    spotlight: {
+      speed: 0.5,
+      light: 'hsla(0, 0, 0, 0.25)',
+      x: 0,
+      y: -50,
+      z: 200,
+    },
+    ambience: {
+      light: 'hsla(0, 0%, 0%, 0.25)',
+      x: 120,
+      y: -154,
+      z: 160,
+    },
+  }
+
+  // Función para inicializar el navbar
+  function initializeNavbar() {
+    // Obtener elementos del DOM
+    const nav = document.querySelector('.navbar')
+    if (!nav) return
+
+    const links = nav.querySelectorAll('a')
+    const spotlightfePointLight = document.querySelector(
+      '#spotlight fePointLight'
+    )
+    const ambiencefePointLight = document.querySelector(
+      '#ambience fePointLight'
+    )
+    // Función para actualizar la posición de la luz del spotlight
+    const updateSpotlightPosition = () => {
+      const anchor = document.querySelector('[data-active="true"]')
+      if (!anchor || !spotlightfePointLight) return
+
+      const navBounds = nav.getBoundingClientRect()
+      const anchorBounds = anchor.getBoundingClientRect()
+
+      const x =
+        anchorBounds.left -
+        navBounds.left +
+        anchorBounds.width * 0.5 +
+        LIGHTING_CONFIG.spotlight.x
+
+      gsap.to(spotlightfePointLight, {
+        duration: LIGHTING_CONFIG.spotlight.speed,
+        attr: {
+          x: String(x),
+          y: String(LIGHTING_CONFIG.spotlight.y),
+          z: String(LIGHTING_CONFIG.spotlight.z),
+        },
+        ease: 'power2.inOut',
+      })
+    }
+
+    // Función para seleccionar un tab
+    const selectAnchor = (anchor: HTMLAnchorElement) => {
+      const navBounds = nav.getBoundingClientRect()
+      const anchorBounds = anchor.getBoundingClientRect()
+
+      // Actualizar el estado activo
+      for (const link of links) {
+        link.dataset.active = String(anchor === link)
+      }
+
+      // Animar la luz del spotlight hacia el nuevo tab
+      if (spotlightfePointLight) {
+        const x =
+          anchorBounds.left -
+          navBounds.left +
+          anchorBounds.width * 0.5 +
+          LIGHTING_CONFIG.spotlight.x
+
+        gsap.to(spotlightfePointLight, {
+          duration: LIGHTING_CONFIG.spotlight.speed,
+          attr: {
+            x: String(x),
+            y: String(LIGHTING_CONFIG.spotlight.y),
+            z: String(LIGHTING_CONFIG.spotlight.z),
+          },
+          ease: 'power2.inOut',
+        })
+
+        // Use ScrollToPlugin for smooth navigation after the spotlight animation
+        gsap.to(window, {
+          scrollTo: {
+            y: anchor.getAttribute('href') || 0, // Scroll to the target ID
+            offsetY: 80, // Adjust this offset if your navbar has a fixed height
+          },
+          duration: LIGHTING_CONFIG.spotlight.speed + 0.2, // Slightly longer duration than spotlight
+          ease: 'power2.inOut',
+        })
+      }
+    }
+
+    // Inicializar posiciones de luces
+    const initializeLighting = () => {
+      updateSpotlightPosition()
+
+      // Configurar luz ambiental
+      if (ambiencefePointLight) {
+        ambiencefePointLight.setAttribute(
+          'x',
+          String(LIGHTING_CONFIG.ambience.x)
+        )
+        ambiencefePointLight.setAttribute(
+          'y',
+          String(LIGHTING_CONFIG.ambience.y)
+        )
+        ambiencefePointLight.setAttribute(
+          'z',
+          String(LIGHTING_CONFIG.ambience.z)
+        )
+      }
+    }
+
+    // Función para detectar el color del fondo y adaptar el navbar
+    const updateNavbarStyle = () => {
+      const scrollPosition = window.scrollY
+      const sections = document.querySelectorAll('section')
+      let isDarkBackground = false
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect()
+        if (rect.top <= 100 && rect.bottom >= 100) {
+          const computedStyle = window.getComputedStyle(section)
+          const backgroundColor = computedStyle.backgroundColor
+          // Convertir el color a HSL para determinar si es oscuro
+          const rgb = backgroundColor.match(/\d+/g)
+          if (rgb) {
+            const [r, g, b] = rgb.map(Number)
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000
+            isDarkBackground = brightness < 128
+          }
+        }
+      })
+
+      nav.classList.toggle('dark-background', isDarkBackground)
+    }
+
+    // Event listener para clicks en la navegación
+    nav.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement
+      if (target.tagName === 'A') {
+        event.preventDefault()
+        selectAnchor(target as HTMLAnchorElement)
+      }
+    })
+
+    // Inicializar cuando se carga la página
+    initializeLighting()
+
+    // Actualizar posición en caso de cambio de tamaño de ventana
+    window.addEventListener('resize', updateSpotlightPosition)
+    window.addEventListener('scroll', updateNavbarStyle)
+  }
+
+  // Inicializar cuando el DOM esté listo
+  document.addEventListener('DOMContentLoaded', initializeNavbar)
+</script>
+
+<style>
+  /* Navigation Styles */
+  .navbar {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 62px;
+    border-radius: 100px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+
+  .navbar.dark-background {
+    background: rgba(0, 0, 0, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .navbar::before,
+  .navbar::after {
+    pointer-events: none;
+  }
+
+  .navbar::after {
+    background: rgba(255, 255, 255, 0.1);
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: -1;
+    border-radius: 100px;
+    opacity: 0.15;
+  }
+
+  .navbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 2;
+    border-radius: 100px;
+  }
+
+  .navbar ul {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    height: 100%;
+    font-size: 0.875rem;
+  }
+
+  .navbar ul.lit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .navbar ul.lit li {
+    padding: 0.5rem 1.25rem;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .navbar ul.content li {
+    height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .navbar ul.content li a {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: 0.5rem 1.25rem;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.25s ease-out;
+    position: relative;
+  }
+
+  .navbar ul.content li a:is(:hover, :focus-visible) {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .navbar ul.content li a span {
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .navbar [data-active='true'] {
+    color: rgba(255, 255, 255, 1);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+
+  .navbar [data-active='true']::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    z-index: 0;
+  }
+
+  /* Lighting Effects */
+  .navbar::before,
+  .navbar::after,
+  .navbar ul.lit {
+    filter: url('#spotlight');
+  }
+
+  .navbar ul.content::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 100px;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    filter: url('#ambience') brightness(2);
+  }
+
+  .navbar [data-active='true'] {
+    filter: url('#spotlight');
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>

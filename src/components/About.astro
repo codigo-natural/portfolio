@@ -1,0 +1,522 @@
+---
+import profileImage from '@/assets/profilePic.png'
+import gradientBackground from '@/assets/Gradient_BackgroundTree.png'
+import { ICONS, SOCIALS } from '@/constants'
+---
+
+<section id='about' class='relative overflow-hidden w-screen h-screen'>
+  <img
+    src={gradientBackground.src}
+    class='absolute inset-0 w-full h-full object-cover aspect-square'
+    alt=''
+  />
+
+  <!-- Floating Tech Icons (positioned relative to the section) -->
+  <div class='absolute inset-0 w-full h-full'>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='react'
+      style='bottom: 50%; left: 3%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'React')?.svg} />
+    </div>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='Javascript'
+      style='top: 5%; right: 15%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'JavaScript')?.svg} />
+    </div>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='node'
+      style='bottom: 65%; left: 20%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'NodeJS')?.svg} />
+    </div>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='astro'
+      style='top: 55%; left: 30%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'Astro')?.svg} />
+    </div>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='tailwind'
+      style='bottom: 48%; right: 15%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'Tailwindcss')?.svg} />
+    </div>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='mongodb'
+      style='top: 30%; right: 25%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'MongoDb')?.svg} />
+    </div>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='postgresql'
+      style='bottom: 40%; left: 15%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'Postgresql')?.svg} />
+    </div>
+    <div
+      class='floating-icon absolute w-14 h-14'
+      data-tech='docker'
+      style='top: 60%; right: 3%;'
+    >
+      <div set:html={ICONS.find((icon) => icon.name === 'Docker')?.svg} />
+    </div>
+  </div>
+
+  <!-- Main content wrapper (for header and profile image) -->
+  <div class='relative z-10 h-full flex flex-col items-center px-4 pt-16'>
+    <!-- About Header -->
+    <div class='text-center mt-10'>
+      <h2
+        class='text-6xl font-bold text-gray-900 dark:text-white mb-4 perspective-text'
+      >
+        <span class='text-block opacity-0'>Ivan Camilo</span>
+        <span class='text-block opacity-0'>creando cosas para</span>
+        <span class='text-block opacity-0'>internet desde 2019</span>
+        <span class='text-block highlight-text opacity-0'>Web Developer</span>
+      </h2>
+    </div>
+
+    <!-- Profile Image Container -->
+    <div class='w-full max-w-xl mx-auto'>
+      <div
+        class='profile-card relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white/20'
+      >
+        <!-- Profile Image -->
+        <div
+          class='relative w-full aspect-square rounded-xl overflow-hidden mb-6 profile-image-container'
+        >
+          <img
+            id='profile'
+            src={profileImage.src}
+            alt='Profile picture'
+            class='w-full h-full object-cover'
+          />
+          <div class='profile-overlay'></div>
+        </div>
+
+        <!-- Social Links -->
+        <div class='social-links flex justify-center items-center gap-6 py-4'>
+          <a
+            href='https://linkedin.com/in/your-linkedin'
+            target='_blank'
+            rel='noopener noreferrer'
+            class='social-icon linkedin group'
+          >
+            <div class='icon-wrapper'>
+              <div
+                set:html={SOCIALS.find((icon) => icon.name === 'LinkedIn')?.svg}
+              />
+            </div>
+            <span class='social-tooltip'>LinkedIn</span>
+          </a>
+          <a
+            href='https://github.com/your-github'
+            target='_blank'
+            rel='noopener noreferrer'
+            class='social-icon github group'
+          >
+            <div class='icon-wrapper'>
+              <div
+                set:html={SOCIALS.find((icon) => icon.name === 'GitHub')?.svg}
+              />
+            </div>
+            <span class='social-tooltip'>GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tech-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    cursor: pointer;
+  }
+
+  .tech-icon svg {
+    color: white;
+    opacity: 0.8;
+    transition: all 0.4s ease;
+  }
+
+  .tech-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .tech-icon:hover svg {
+    opacity: 1;
+  }
+
+  .perspective-text {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+
+  .text-block {
+    display: block;
+    position: relative;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    transform-style: preserve-3d;
+    transition: all 0.4s ease;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+  }
+
+  .highlight-text {
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #3b82f6, #8b5cf6);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+    animation: gradientFlow 8s ease infinite;
+    transform: translateZ(50px);
+  }
+
+  @keyframes gradientFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .profile-card {
+    transform: translateY(0);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .profile-image-container {
+    position: relative;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+  }
+
+  .profile-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .profile-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      45deg,
+      rgba(59, 130, 246, 0.05),
+      rgba(139, 92, 246, 0.05)
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .profile-image-container:hover .profile-overlay {
+    opacity: 1;
+  }
+
+  .social-links {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .social-icon {
+    position: relative;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .icon-wrapper {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .social-icon svg {
+    width: 100%;
+    height: 100%;
+    color: white;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+
+  .social-icon:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .social-icon.linkedin:hover svg {
+    color: #0077b5;
+  }
+
+  .social-icon.github:hover svg {
+    color: #333;
+  }
+
+  .social-tooltip {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .social-icon:hover .social-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (max-width: 640px) {
+    .profile-card {
+      padding: 1rem;
+    }
+
+    .social-icon {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .icon-wrapper {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(ScrollTrigger)
+
+  // Enhanced GSAP Animation for header with 3D effects
+  const textBlocks = document.querySelectorAll('.text-block')
+
+  textBlocks.forEach((block, index) => {
+    // Initial animation with enhanced 3D effects
+    gsap.fromTo(
+      block,
+      {
+        opacity: 0,
+        y: 100,
+        scale: 0.8,
+        rotateX: -45,
+        transformOrigin: 'center center',
+      },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        rotateX: 0,
+        duration: 1.5,
+        ease: 'power3.out',
+        delay: index * 0.2,
+        scrollTrigger: {
+          trigger: '#about',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    )
+
+    // Enhanced hover effect with 3D rotation
+    block.addEventListener('mouseenter', () => {
+      gsap.to(block, {
+        scale: 1.05,
+        rotateX: 10,
+        rotateY: 5,
+        duration: 0.4,
+        ease: 'power2.out',
+        textShadow: '0 0 15px rgba(255,255,255,0.3)',
+      })
+    })
+
+    block.addEventListener('mouseleave', () => {
+      gsap.to(block, {
+        scale: 1,
+        rotateX: 0,
+        rotateY: 0,
+        duration: 0.4,
+        ease: 'power2.out',
+        textShadow: 'none',
+      })
+    })
+
+    // Enhanced gradient animation for highlight text
+    if (block.classList.contains('highlight-text')) {
+      gsap.to(block, {
+        backgroundPosition: '200% center',
+        duration: 8,
+        repeat: -1,
+        ease: 'none',
+      })
+    }
+  })
+
+  // GSAP Animation for floating icons with improved movement
+  const floatingIcons = document.querySelectorAll('.floating-icon')
+
+  floatingIcons.forEach((icon, index) => {
+    gsap.fromTo(
+      icon,
+      {
+        opacity: 0,
+        scale: 0.8,
+        y: 20,
+      },
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        delay: index * 0.1,
+        scrollTrigger: {
+          trigger: '#about',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    )
+
+    // Subtle hover effect for icons
+    icon.addEventListener('mouseenter', () => {
+      gsap.to(icon, {
+        scale: 1.1,
+        duration: 0.3,
+        ease: 'power2.out',
+      })
+    })
+
+    icon.addEventListener('mouseleave', () => {
+      gsap.to(icon, {
+        scale: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+      })
+    })
+  })
+
+  // Enhanced profile image animation
+  gsap.fromTo(
+    '#profile',
+    {
+      scale: 1.1,
+      opacity: 0,
+      rotateY: -15,
+    },
+    {
+      scale: 1,
+      opacity: 1,
+      rotateY: 0,
+      duration: 1,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.profile-image-container',
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+    }
+  )
+
+  // Enhanced card animation
+  gsap.fromTo(
+    '.profile-card',
+    {
+      opacity: 0,
+      y: 30,
+    },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.profile-card',
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+    }
+  )
+
+  // Enhanced social icons animation
+  const socialIcons = document.querySelectorAll('.social-icon')
+
+  socialIcons.forEach((icon, index) => {
+    gsap.fromTo(
+      icon,
+      {
+        opacity: 0,
+        y: 15,
+        scale: 0.9,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.5,
+        delay: index * 0.1 + 0.2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.profile-card',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    )
+  })
+</script>
