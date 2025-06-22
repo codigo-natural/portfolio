@@ -1,7 +1,7 @@
 import realtimeChat from '@/assets/projects/realtimeChat.png'
 import saascribe from '@/assets/projects/saascribe.png'
 import githubLikeApp from '@/assets/projects/githubLikeApp.png'
-import ecomerceTech from '@/assets/projects/ecomerceTech.png'
+import ecomerceTech from '@/assets/projects/ecomerceTech.jpg'
 import storiKidAi from '@/assets/projects/syoriKidAi.png'
 
 import type { Project } from 'types'
