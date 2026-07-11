@@ -1,0 +1,27 @@
+---
+interface Props {
+  activeSection?: string
+}
+const { activeSection = 'about' } = Astro.props
+
+const navItems = [
+  { name: 'About Me', href: '#about', id: 'about' },
+  { name: 'Projects', href: '#projects', id: 'projects' },
+  { name: 'Skills', href: '#skills', id: 'skills' },
+  { name: 'Contact Me', href: '#contact', id: 'contact' },
+];
+---
+
+<nav class="flex flex-col justify-between h-full py-8">
+  {navItems.map((item) => (
+    <a
+      href={item.href}
+      class={`text-4xl font-medium transition-colors whitespace-nowrap ${
+        activeSection === item.id ? 'text-gray-900' : 'text-gray-600 hover:text-gray-900'
+      }`}
+      style="writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);"
+    >
+      {item.name}
+    </a>
+  ))}
+</nav>
