@@ -1,0 +1,531 @@
+---
+// Experiencia con empresas (Clients). Datos del CV + LinkedIn.
+// Toda la info está en la card; al hacer hover (o al estar activa) se expande.
+const linkedin = 'https://www.linkedin.com/in/ivancamilobuitrago/'
+
+const companies = [
+  {
+    id: 'voltiva',
+    num: '01',
+    name: 'Voltiva',
+    role: 'Backend & Automation Developer',
+    period: 'Actualidad',
+    mode: 'Remoto',
+    color: '#f97316',
+    short:
+      'Automatizaciones en n8n (incl. el chatbot de WhatsApp "Lucía") y backend en NestJS.',
+    tech: ['n8n', 'NestJS', 'Prisma', 'PostgreSQL', 'Redis', 'AWS'],
+    details: [
+      'Automatizaciones en n8n integradas a servicios internos, incluyendo el chatbot de WhatsApp "Lucía", optimizando el flujo de gestión de prospectos.',
+      'Backend en NestJS: firma electrónica con ZapSign, generación asíncrona de PDFs con BullMQ/Redis y migraciones con Prisma/PostgreSQL.',
+      'Docker (incl. MinIO), despliegues en AWS y frontend en Vue/Nuxt.',
+    ],
+  },
+  {
+    id: 'justmobile',
+    num: '02',
+    name: 'Just Mobile Security',
+    role: 'SSR Frontend Developer',
+    period: 'Jul 2025 — Actualidad',
+    mode: 'Remoto',
+    color: '#3b82f6',
+    short:
+      'Plataformas web con React, Next.js y TypeScript enfocadas en ciberseguridad móvil.',
+    tech: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Kubernetes', 'AWS'],
+    details: [
+      'Desarrollo fullstack con React, Next.js y TypeScript; backend con Node.js y AdonisJS para APIs REST con validación estructurada y autenticación JWT.',
+      'Docker en producción para levantar emuladores de entornos mobile usados en análisis estático de vulnerabilidades.',
+      'Contribución sobre infraestructura Kubernetes: escalado horizontal para un editor de documentación de alta concurrencia, con persistencia en AWS y PostgreSQL.',
+      'Optimización de rendimiento en frontend (SWR, lazy loading) y buenas prácticas de seguridad basadas en OWASP.',
+    ],
+  },
+  {
+    id: 'callbook',
+    num: '03',
+    name: 'Callbook.ai',
+    role: 'Client Engineer',
+    period: 'Mar 2025 — Jul 2025',
+    mode: 'Presencial',
+    color: '#8b5cf6',
+    short:
+      'Dashboards y módulos administrativos con React/Next.js e integración con Metabase.',
+    tech: ['React', 'Next.js', 'Node.js', 'MongoDB', 'Metabase'],
+    details: [
+      'Desarrollo de dashboards y módulos administrativos con React y Next.js, integrando servicios backend en Node.js con MongoDB.',
+      'Modelado de datos y optimización de consultas; consumo de APIs REST con manejo de estados asíncronos.',
+      'Generación de reportes con Metabase para análisis y visualización de métricas operativas.',
+      'Prompt engineering para tareas específicas, lo que ayudó a atraer un nuevo cliente a la compañía.',
+    ],
+  },
+  {
+    id: 'wondertech',
+    num: '04',
+    name: 'Wondertech',
+    role: 'Developer · E-commerce Integration',
+    period: 'Dic 2024 — Mar 2025',
+    mode: 'Presencial',
+    color: '#ef4444',
+    short:
+      'Integración de e-commerce y automatización de procesos con n8n, Make y Power Automate.',
+    tech: ['ReactJS', 'Tailwind', 'Azure Functions', 'REST APIs', 'n8n'],
+    details: [
+      'Centralicé productos de múltiples plataformas usando Power Query.',
+      'Integré APIs de 7+ plataformas de e-commerce (VTEX, Falabella, Servientrega, WooCommerce).',
+      'Automaticé procesos de extracción y actualización de productos con Azure Functions.',
+      'Desarrollo de un sistema de puntos por compras con ReactJS y TailwindCSS, optimizando incentivos para clientes.',
+    ],
+  },
+  {
+    id: 'eco2',
+    num: '05',
+    name: 'ECO² CO',
+    role: 'Front-end Developer',
+    period: 'May 2023 — May 2024',
+    mode: 'Remoto',
+    color: '#22c55e',
+    short:
+      'Aplicaciones web con APIs de OpenAI (React/TS) y despliegues en AWS/OVH.',
+    tech: ['React', 'TypeScript', 'OpenAI', 'AWS', 'Docker', 'NGINX'],
+    details: [
+      'Desarrollé aplicaciones web utilizando APIs de OpenAI con React.js y TypeScript.',
+      'Implementé soluciones de inteligencia artificial para la mejora de productos.',
+      'Desplegué aplicaciones en cloud (AWS y OVH) y configuré infraestructura con Docker, NGINX y PM2.',
+      'Colaboré en backend cuando fue necesario, demostrando versatilidad técnica.',
+    ],
+  },
+  {
+    id: 'freelance',
+    num: '06',
+    name: 'Freelance',
+    role: 'Web Developer',
+    period: '2020 — 2025',
+    mode: 'Independiente',
+    color: '#ec4899',
+    short:
+      'MVPs y aplicaciones web para startups en los sectores legal e inmobiliario.',
+    tech: ['React', 'Next.js', 'Node.js', 'Express', 'PostgreSQL', 'Firebase'],
+    details: [
+      'Desarrollo de MVPs y aplicaciones web para startups y empresas.',
+      'Interfaces dinámicas y optimización UX/UI con ReactJS y NextJS.',
+      'APIs REST, modelado relacional en PostgreSQL con optimización de consultas y autenticación con JWT/Firebase.',
+      'Despliegues en entornos cloud con configuración de servidores.',
+    ],
+  },
+]
+---
+
+<section id="clients" class="clients">
+  <div class="clients-head">
+    <p class="clients-eyebrow">Experiencia</p>
+    <h2 class="clients-title">Empresas con las que he trabajado</h2>
+  </div>
+
+  <div class="timeline">
+    <!-- Camino curvo que conecta las cards -->
+    <svg class="conn" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="conn-reveal" clipPathUnits="userSpaceOnUse">
+          <rect id="conn-rect" x="0" y="0" width="0" height="0"></rect>
+        </clipPath>
+      </defs>
+      <path class="conn-base" fill="none"></path>
+      <path class="conn-glow" fill="none" clip-path="url(#conn-reveal)"></path>
+    </svg>
+
+    {companies.map((c, i) => (
+      <div class={`row ${i % 2 === 0 ? 'left' : 'right'}`} style={`--c: ${c.color}`}>
+        <article class="card" tabindex="0" aria-label={c.name}>
+          <span class="pin"></span>
+          <span class="num">{c.num}</span>
+          <h3 class="name">{c.name}</h3>
+          <p class="role">{c.role}</p>
+          <p class="meta">{c.period} · {c.mode}</p>
+          <p class="short">{c.short}</p>
+          <div class="chips">
+            {c.tech.map((t) => (
+              <span class="chip">{t}</span>
+            ))}
+          </div>
+          <div class="details">
+            <div class="details-inner">
+              <ul class="detail-list">
+                {c.details.map((d) => (
+                  <li>{d}</li>
+                ))}
+              </ul>
+              <a class="detail-link" href={linkedin} target="_blank" rel="noopener noreferrer">
+                Ver perfil en LinkedIn →
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .clients {
+    max-width: 72rem;
+    margin: 5rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .clients-head {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+  .clients-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #8b8b8b;
+    margin: 0 0 0.5rem;
+  }
+  .clients-title {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: #f5f5f7;
+  }
+
+  /* Timeline + camino curvo ------------------------------------------- */
+  .timeline {
+    position: relative;
+  }
+
+  .conn {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .conn-base {
+    stroke: #b3b3b3;
+    stroke-width: 2;
+    stroke-dasharray: 5 5;
+    stroke-linecap: round;
+    fill: none;
+    shape-rendering: geometricPrecision;
+    vector-effect: non-scaling-stroke;
+  }
+  .conn-glow {
+    stroke: #818cf8;
+    stroke-width: 2;
+    stroke-dasharray: 5 5;
+    stroke-linecap: round;
+    fill: none;
+    shape-rendering: geometricPrecision;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 5px rgba(129, 140, 248, 0.85));
+  }
+
+  .row {
+    position: relative;
+    display: flex;
+    margin-block: 1.75rem;
+  }
+  .row.left {
+    justify-content: flex-start;
+  }
+  .row.right {
+    justify-content: flex-end;
+  }
+
+  /* Card (sticky note) ------------------------------------------------ */
+  .card {
+    position: relative;
+    width: min(46%, 25rem);
+    text-align: left;
+    background: #17171f;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    padding: 1.75rem 1.5rem 1.5rem;
+    box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.7);
+    cursor: default;
+    transition:
+      box-shadow 0.35s ease,
+      border-color 0.35s ease;
+    color: #f5f5f7;
+    outline: none;
+    z-index: 1;
+  }
+  .card:hover,
+  .card:focus-within,
+  .row.is-active .card {
+    border-color: color-mix(in srgb, var(--c) 55%, transparent);
+    box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.8);
+  }
+  .row.is-active .card {
+    box-shadow:
+      0 24px 48px -16px rgba(0, 0, 0, 0.8),
+      0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent);
+  }
+
+  .pin {
+    position: absolute;
+    top: -0.65rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 999px;
+    z-index: 3;
+    background: radial-gradient(
+      circle at 35% 30%,
+      color-mix(in srgb, var(--c) 60%, #fff) 0%,
+      var(--c) 55%,
+      color-mix(in srgb, var(--c) 70%, #000) 100%
+    );
+    box-shadow:
+      0 4px 8px -2px rgba(20, 19, 27, 0.45),
+      inset -1px -1px 3px rgba(0, 0, 0, 0.25);
+  }
+  /* Pin en la esquina interna (del lado del camino) */
+  .row.left .pin {
+    right: -0.55rem;
+  }
+  .row.right .pin {
+    left: -0.55rem;
+  }
+
+  .num {
+    display: inline-block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-style: italic;
+    color: var(--c);
+    letter-spacing: -0.02em;
+  }
+  .name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0.15rem 0 0;
+  }
+  .role {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0.35rem 0 0;
+    color: #c9c6d6;
+  }
+  .meta {
+    font-size: 0.78rem;
+    color: #9a97a8;
+    margin: 0.35rem 0 0;
+  }
+  .short {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #b8b5c5;
+    margin: 0.9rem 0 0;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+  .chip {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--c) 22%, transparent);
+    color: color-mix(in srgb, var(--c) 45%, #fff);
+  }
+
+  /* Detalle: siempre visible dentro de la card (sin overlay) ---------- */
+  .details {
+    margin-top: 1.1rem;
+  }
+
+  .detail-list {
+    margin: 0;
+    padding: 1rem 0 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .detail-list li {
+    position: relative;
+    padding-left: 1.1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #b8b5c5;
+  }
+  .detail-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--c);
+  }
+  .detail-link {
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--c);
+    text-decoration: none;
+  }
+  .detail-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive -------------------------------------------------------- */
+  @media (max-width: 768px) {
+    .row,
+    .row.left,
+    .row.right {
+      justify-content: flex-start;
+      padding-left: 1.5rem;
+    }
+    .card,
+    .row.left .card,
+    .row.right .card {
+      width: 100%;
+      transform: rotate(0deg);
+    }
+    .row.left .pin,
+    .row.right .pin {
+      left: -0.55rem;
+      right: auto;
+    }
+  }
+
+</style>
+
+<script>
+  import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(ScrollTrigger)
+
+  const timeline = document.querySelector<HTMLElement>('.timeline')
+  const svg = document.querySelector<SVGSVGElement>('.conn')
+  const base = document.querySelector<SVGPathElement>('.conn-base')
+  const glow = document.querySelector<SVGPathElement>('.conn-glow')
+  const rect = document.querySelector<SVGRectElement>('#conn-rect')
+
+  let svgH = 0
+
+  // Puntos de la curva (relativos al ancho de cada card)
+  const START = 0.68 // salida: % del ancho de A, hacia la card siguiente
+  const END = 0.22 // llegada: % del ancho de B, hacia el lado contrario
+  const TUCK = 6 // px que se ocultan bajo el borde de la card
+
+  // Curva Bézier cúbica en "S" asimétrica entre tarjetas alternadas
+  function buildPath(): string {
+    if (!timeline) return ''
+    const origin = timeline.getBoundingClientRect()
+    const rows = Array.from(timeline.querySelectorAll<HTMLElement>('.row'))
+    let d = ''
+
+    for (let i = 0; i < rows.length - 1; i++) {
+      const aCard = rows[i].querySelector<HTMLElement>('.card')
+      const bCard = rows[i + 1].querySelector<HTMLElement>('.card')
+      if (!aCard || !bCard) continue
+
+      const aLeft = rows[i].classList.contains('left')
+      const a = aCard.getBoundingClientRect()
+      const b = bCard.getBoundingClientRect()
+
+      // Salida: borde inferior de A, desplazado hacia la card siguiente
+      const x1 = a.left + (aLeft ? START : 1 - START) * a.width - origin.left
+      const y1 = a.bottom - TUCK - origin.top
+      // Llegada: borde superior de B, desplazado hacia el lado contrario
+      const x2 = b.left + (aLeft ? END : 1 - END) * b.width - origin.left
+      const y2 = b.top + TUCK - origin.top
+
+      // Controles verticales (misma x, ±cv) -> sale y entra vertical, "S" acostada
+      const cv = Math.max(60, (y2 - y1) * 0.6)
+
+      d += `M ${x1} ${y1} C ${x1} ${y1 + cv}, ${x2} ${y2 - cv}, ${x2} ${y2} `
+    }
+    return d
+  }
+
+  function draw() {
+    if (!timeline || !svg || !base || !glow || !rect) return
+    const w = timeline.clientWidth
+    svgH = timeline.clientHeight
+
+    svg.setAttribute('width', String(w))
+    svg.setAttribute('height', String(svgH))
+    svg.setAttribute('viewBox', `0 0 ${w} ${svgH}`)
+    rect.setAttribute('width', String(w))
+
+    const d = buildPath()
+    base.setAttribute('d', d)
+    glow.setAttribute('d', d)
+  }
+
+  draw()
+  requestAnimationFrame(draw)
+  // Redibujos extra por si fuentes/imágenes cambian el layout inicial
+  setTimeout(() => {
+    draw()
+    ScrollTrigger.refresh()
+  }, 250)
+  window.addEventListener('load', () => {
+    draw()
+    ScrollTrigger.refresh()
+  })
+  window.addEventListener('resize', () => {
+    draw()
+    ScrollTrigger.refresh()
+  })
+  if ('fonts' in document) {
+    ;(document as any).fonts.ready.then(() => {
+      draw()
+      ScrollTrigger.refresh()
+    })
+  }
+
+  // Iluminación progresiva del camino según el scroll
+  ScrollTrigger.create({
+    trigger: '.timeline',
+    start: 'top 60%',
+    end: 'bottom 60%',
+    scrub: 0.5,
+    onUpdate: (self) => {
+      if (rect) rect.setAttribute('height', String(self.progress * svgH))
+    },
+  })
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  // Card activa según su posición en pantalla + entrada al hacer scroll
+  gsap.utils.toArray<HTMLElement>('.row').forEach((row) => {
+    ScrollTrigger.create({
+      trigger: row,
+      start: 'top 60%',
+      end: 'bottom 40%',
+      onToggle: (self) => row.classList.toggle('is-active', self.isActive),
+    })
+
+    if (!reduceMotion) {
+      const card = row.querySelector<HTMLElement>('.card')
+      if (card) {
+        gsap.from(card, {
+          opacity: 0,
+          y: 42,
+          duration: 0.7,
+          ease: 'power2.out',
+          immediateRender: false,
+          scrollTrigger: { trigger: row, start: 'top 88%', once: true },
+        })
+      }
+    }
+  })
+</script>

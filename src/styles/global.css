@@ -1,9 +1,72 @@
 @import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
 
-html {
-  color-scheme: light dark;
+@theme {
+  --grid-template-columns-main: 380px 1fr;
+  --grid-template-columns-nested: 2fr 1fr;
 }
+
+/* ------------------------------------------------------------------ */
+/* Design system for the About section cards                          */
+/* Consistent spacing, type hierarchy and shared effects.             */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* Card base: consistent padding + radius + clipping */
+  .card {
+    @apply relative flex flex-col p-7 rounded-[2em] overflow-hidden;
+  }
+
+  /* Type hierarchy ------------------------------------------------- */
+  .card-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-gray-500;
+  }
+  .card-title {
+    @apply text-xl font-bold tracking-tight text-gray-900;
+  }
+
+  /* Stats: number is the hero, label is the support */
+  .stat-value {
+    @apply text-4xl font-extrabold leading-none tracking-tight text-gray-900;
+  }
+  .stat-label {
+    @apply text-sm font-medium text-gray-500;
+  }
+
+  /* List rows with a leading dot */
+  .list-item {
+    @apply flex items-center gap-2.5 text-base font-medium text-gray-800;
+  }
+  .list-dot {
+    @apply h-1.5 w-1.5 flex-shrink-0 rounded-full;
+  }
+
+  /* Decorative corner brackets (top-right + bottom-left), like the ref */
+  .brackets::before,
+  .brackets::after {
+    content: '';
+    position: absolute;
+    width: 0.9rem;
+    height: 0.9rem;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .brackets::before {
+    top: 1.1rem;
+    right: 1.1rem;
+    border-top: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+  }
+  .brackets::after {
+    bottom: 1.1rem;
+    left: 1.1rem;
+    border-bottom: 2px solid currentColor;
+    border-left: 2px solid currentColor;
+  }
+}
+
+/* html {
+  color-scheme: light dark;
+} */
 
 [data-theme='light'] {
   color-scheme: light only;
@@ -27,7 +90,8 @@ html {
 }
 
 body {
-  background: light-dark(#fff, #000);
+  background: #0b0b12;
+  color: #f5f5f7;
   min-height: 100vh;
   font-family: 'SF Pro Text', 'SF Pro Icons', 'AOS Icons', 'Helvetica Neue',
     Helvetica, Arial, sans-serif, system-ui;

@@ -1,0 +1,77 @@
+---
+interface Props {
+  activeSection?: string
+}
+const { activeSection = 'about' } = Astro.props
+
+const navItems = [
+  { name: 'About Me', href: '#about', id: 'about' },
+  { name: 'Projects', href: '#projects', id: 'projects' },
+  { name: 'Skills', href: '#skills', id: 'skills' },
+  { name: 'Clients', href: '#clients', id: 'clients' },
+  { name: 'Contact Me', href: '#contact', id: 'contact' },
+];
+---
+
+<nav class="flex flex-col justify-between h-full py-8">
+  {navItems.map((item) => (
+    <a
+      href={item.href}
+      data-target={item.id}
+      class:list={['nav-link text-4xl font-medium whitespace-nowrap', { active: activeSection === item.id }]}
+      style="writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);"
+    >
+      {item.name}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .nav-link {
+    color: #737373;
+    transition: color 0.3s ease;
+  }
+  .nav-link.active,
+  .nav-link:hover {
+    color: #fff;
+  }
+</style>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-link'))
+  const linkFor = new Map<string, HTMLAnchorElement>()
+  links.forEach((l) => {
+    if (l.dataset.target) linkFor.set(l.dataset.target, l)
+  })
+
+  const sections = Array.from(linkFor.keys())
+    .map((id) => document.getElementById(id))
+    .filter((el): el is HTMLElement => el !== null)
+
+  // Scroll suave al hacer click (en JS, para no interferir con el pin de ScrollTrigger)
+  links.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const id = link.dataset.target
+      const target = id && document.getElementById(id)
+      if (!target) return
+      e.preventDefault()
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  })
+
+  function setActive(id: string) {
+    links.forEach((l) => l.classList.toggle('active', l.dataset.target === id))
+  }
+
+  // Se activa la sección que cruza la franja central del viewport
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActive(entry.target.id)
+      })
+    },
+    { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+  )
+
+  sections.forEach((s) => observer.observe(s))
+</script>

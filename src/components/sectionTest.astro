@@ -1,0 +1,237 @@
+---
+import profileImage from "@/assets/personal.png";
+---
+
+<section class="">
+    <nav
+        class="flex items-center justify-between max-w-[50em] mx-auto relative z-5 overflow-hidden"
+    >
+        <div
+            class="flex items-center gap-1.5 bg-black px-5 rounded-br-4xl relative after:content-[''] after:absolute after:bg-[#183fad] after:w-1/2 after:h-1/2 after:-bottom-1 after:-right-1 after:-z-5 self-stretch w-full max-w-45"
+        >
+            <svg
+                width="40"
+                height="40"
+                viewBox="0 0 40 40"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <rect width="40" height="40" rx="6" fill="#F1BF0A"></rect>
+                <path
+                    d="M15.3414 14.7356C15.4039 15.1058 15.726 15.3846 16.1106 15.3846H16.9039C17.375 15.3846 17.75 14.976 17.6875 14.5192C17.5048 13.1635 16.899 11.9135 15.9279 10.9279C15.2356 10.2212 14.7933 9.32692 14.6587 8.35577C14.6058 7.97596 14.2789 7.69231 13.8846 7.69231H13.0962C12.625 7.69231 12.2596 8.10096 12.3125 8.55769C12.5 10.0913 13.1779 11.5048 14.2644 12.6154C14.8414 13.2019 15.2115 13.9375 15.3414 14.7356ZM20.726 14.7356C20.7885 15.1058 21.1106 15.3846 21.4952 15.3846H22.2885C22.7596 15.3846 23.1346 14.976 23.0721 14.5192C22.8894 13.1635 22.2837 11.9135 21.3125 10.9279C20.6202 10.2212 20.1779 9.32692 20.0433 8.35577C19.9904 7.97596 19.6635 7.69231 19.2692 7.69231H18.4808C18.0096 7.69231 17.6394 8.10096 17.6971 8.55769C17.8846 10.0913 18.5625 11.5048 19.649 12.6154C20.226 13.2019 20.5962 13.9375 20.726 14.7356ZM28.4615 16.9231H10.7692C9.91827 16.9231 9.23077 17.6106 9.23077 18.4615V27.6923C9.23077 30.2404 11.2981 32.3077 13.8462 32.3077H23.0769C25.625 32.3077 27.6923 30.2404 27.6923 27.6923H28.4615C31.4327 27.6923 33.8462 25.2788 33.8462 22.3077C33.8462 19.3365 31.4327 16.9231 28.4615 16.9231ZM28.4615 24.6154H27.6923V20H28.4615C29.7356 20 30.7692 21.0337 30.7692 22.3077C30.7692 23.5817 29.7356 24.6154 28.4615 24.6154Z"
+                    fill="#090909"></path>
+            </svg>
+            <span class="font-anton select-none text-white">About Me</span>
+        </div>
+
+        <div
+            class="flex items-center justify-end min-[480px]:justify-between gap-4 flex-1 bg-[#183fad] text-white p-3.5 rounded-t-4xl"
+        >
+            <div class="hidden md:block"></div>
+
+            <button
+                id="menu-toggle"
+                type="button"
+                class="md:hidden cursor-pointer rounded relative z-[110]"
+                aria-label="Abrir menú"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="size-9"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </button>
+            <div
+                class="hidden min-[480px]:flex items-center gap-2 bg-[#F1BF0A] rounded-full py-1.5 pl-1.5 pr-4 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 hover:after:w-full after:transition-[width] after:duration-1600 after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0"
+            >
+                <a
+                    href="https://github.com/codigo-natural"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Ver mi GitHub"
+                    class="hidden min-[480px]:flex items-center gap-2 bg-[#F1BF0A] rounded-full py-1.5 pl-1.5 pr-4 text-[#090909] whitespace-nowrap relative after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:left-1.5 after:rounded-full after:bg-white after:h-9 after:w-9 hover:after:w-full after:transition-[width] after:duration-1600 after:ease-[linear(0,0.029_0.8%,0.13_1.8%,0.908_7.2%,1.051_9.1%,1.112_11.2%,1.116_12.2%,1.106_13.4%,1.007_19.5%,0.987_23.1%,1.001_35%,1)] overflow-hidden hover:after:h-full hover:after:left-0"
+                >
+                    <div class="rounded-full p-1.5 relative z-10">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            class="size-6"
+                        >
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <span class="relative z-10">Explore GitHub</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menú móvil (overlay) -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-0 z-[105] flex-col items-center justify-center gap-7 bg-[#0b0b12]/97 backdrop-blur-sm md:hidden">
+        <button id="menu-close" type="button" aria-label="Cerrar menú" class="absolute top-5 right-5 text-white/70 hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-9">
+                <path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+        <a href="#about" class="mm-link">About Me</a>
+        <a href="#projects" class="mm-link">Projects</a>
+        <a href="#skills" class="mm-link">Skills</a>
+        <a href="#clients" class="mm-link">Clients</a>
+        <a href="#contact" class="mm-link">Contact Me</a>
+    </div>
+
+    <header
+        class="max-w-[50em] mx-auto bg-[#183fad] text-white p-6 sm:p-10 rounded-tl-4xl rounded-b-4xl relative z-0 overflow-hidden flex flex-col min-h-[46rem] lg:min-h-[54rem]">
+        <!-- TOP: nombre -->
+        <div class="relative z-40 st-fade">
+            <h1 class="font-bold leading-[1.02] text-3xl sm:text-4xl lg:text-5xl">
+                I'm
+                <span class="block">Ivan Camilo</span>
+                <span class="block">Buitrago</span>
+            </h1>
+        </div>
+
+        <!-- "Developer" DETRÁS del retrato -->
+        <h2 class="absolute left-1/2 -translate-x-1/2 top-[30%] z-10 text-center font-bold leading-[0.85] tracking-tight text-[clamp(3rem,11vw,9rem)] text-white/85 pointer-events-none select-none">
+            Developer
+        </h2>
+
+        <!-- Retrato AL FRENTE (z-20), más grande, con float -->
+        <div class="absolute left-1/2 -translate-x-1/2 bottom-0 z-20 pointer-events-none">
+            <img
+                src={profileImage.src}
+                alt="Ivan Camilo Buitrago"
+                class="select-none w-72 sm:w-80 lg:w-[26rem] object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_82%,transparent)]"
+                draggable="false"
+            />
+        </div>
+
+        <!-- BOTTOM: email + badge -->
+        <section class="relative z-40 mt-auto flex items-end justify-between gap-4 st-fade">
+            <a
+                href="mailto:buitragoivancamilo1025@gmail.com"
+                class="inline-flex w-fit items-center gap-2 py-1 text-base sm:text-lg font-medium hover:opacity-80 transition border-b-2 border-dashed border-white/80 break-all"
+            >
+                buitragoivancamilo1025@gmail.com
+            </a>
+
+            <div
+                class="relative grid place-items-center h-20 w-20 lg:h-28 lg:w-28 flex-shrink-0 rounded-full bg-black text-white"
+            >
+                <svg
+                    viewBox="0 0 100 100"
+                    class="absolute inset-0 h-full w-full p-2 animate-[spin_18s_linear_infinite]"
+                >
+                    <defs>
+                        <path
+                            id="circ"
+                            d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0"
+                        ></path>
+                    </defs>
+                    <text font-size="12" letter-spacing="2" fill="currentColor">
+                        <textPath href="#circ"
+                            >DESIGN · PORTFOLIO · 2026 ·
+                        </textPath>
+                    </text>
+                </svg>
+                <div class="h-2 w-2 rounded-full bg-white"></div>
+            </div>
+        </section>
+    </header>
+</section>
+
+<style>
+
+  /* Entrada de los textos */
+  @keyframes st-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .st-fade {
+    animation: st-fade-up 0.8s ease-out both;
+  }
+
+  /* Menú móvil */
+  .mobile-menu {
+    display: none;
+  }
+  .mobile-menu.is-open {
+    display: flex;
+  }
+  .mm-link {
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .mm-link:hover,
+  .mm-link:focus-visible {
+    color: #fff;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap'
+
+  const toggle = document.getElementById('menu-toggle')
+  const menu = document.getElementById('mobile-menu')
+  const closeBtn = document.getElementById('menu-close')
+  const links = menu ? Array.from(menu.querySelectorAll<HTMLElement>('a')) : []
+
+  function openMenu() {
+    if (!menu) return
+    menu.classList.add('is-open')
+    toggle?.setAttribute('aria-expanded', 'true')
+    document.body.style.overflow = 'hidden'
+    gsap.killTweensOf([menu, ...links])
+    gsap.fromTo(menu, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' })
+    gsap.fromTo(
+      links,
+      { y: 24, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.4, stagger: 0.07, ease: 'power3.out', delay: 0.08 }
+    )
+  }
+
+  function closeMenu() {
+    if (!menu || !menu.classList.contains('is-open')) return
+    toggle?.setAttribute('aria-expanded', 'false')
+    document.body.style.overflow = ''
+    gsap.killTweensOf([menu, ...links])
+    gsap.to(menu, {
+      opacity: 0,
+      duration: 0.25,
+      ease: 'power2.in',
+      onComplete: () => menu.classList.remove('is-open'),
+    })
+  }
+
+  toggle?.addEventListener('click', () => {
+    if (menu?.classList.contains('is-open')) closeMenu()
+    else openMenu()
+  })
+  closeBtn?.addEventListener('click', closeMenu)
+
+  // Cerrar al elegir una sección o presionar Escape
+  links.forEach((a) => a.addEventListener('click', closeMenu))
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu()
+  })
+</script>

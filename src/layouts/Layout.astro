@@ -1,15 +1,16 @@
 ---
 import '../styles/global.css'
-import Navbar from '../components/Navbar.astro'
+import Nav from '../components/nav.astro'
 
 interface Props {
   title: string
+  activeSection?: string
 }
-const { title } = Astro.props
+const { title, activeSection = 'about' } = Astro.props
 ---
 
 <!doctype html>
-<html lang='en'>
+<html lang='en' data-theme='dark'>
   <head>
     <meta charset='UTF-8' />
     <meta name='description' content='Astro description' />
@@ -19,10 +20,16 @@ const { title } = Astro.props
     <title>{title}</title>
   </head>
   <body>
-    <Navbar />
-    <!-- Main content -->
-    <main>
-      <slot />
-    </main>
+    <!-- Vertical Navigation -->
+    <div class="flex min-h-screen">
+      <!-- Side nav: pinned on desktop, hidden on small screens -->
+      <div class="hidden md:block w-12 flex-shrink-0 sticky top-0 h-screen">
+        <Nav activeSection={activeSection} />
+      </div>
+      <!-- Main content: min-w-0 lets children shrink instead of overflowing -->
+      <main class="flex-1 min-w-0">
+        <slot />
+      </main>
+    </div>
   </body>
 </html>

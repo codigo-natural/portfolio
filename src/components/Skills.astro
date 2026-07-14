@@ -1,0 +1,137 @@
+---
+// Skills (pila que cae) — tomadas del CV (TECNOLOGÍAS CLAVE).
+// x = posición horizontal, y = distancia desde el fondo del contenedor.
+const skills = [
+  { label: 'React',       x: '4%',  y: '6%',  rot: -8,  cat: 'front' },
+  { label: 'Next.js',     x: '38%', y: '2%',  rot: 5,   cat: 'front' },
+  { label: 'TypeScript',  x: '66%', y: '8%',  rot: -4,  cat: 'front' },
+  { label: 'Tailwind',    x: '20%', y: '26%', rot: 9,   cat: 'front' },
+  { label: 'Node.js',     x: '54%', y: '30%', rot: 7,   cat: 'back' },
+  { label: 'NestJS',      x: '6%',  y: '50%', rot: -11, cat: 'back' },
+  { label: 'Express',     x: '42%', y: '56%', rot: 6,   cat: 'back' },
+  { label: 'PostgreSQL',  x: '70%', y: '52%', rot: -6,  cat: 'db' },
+  { label: 'MongoDB',     x: '24%', y: '78%', rot: 10,  cat: 'db' },
+  { label: 'AWS',         x: '56%', y: '84%', rot: -5,  cat: 'ops' },
+];
+
+const catStyles = {
+  front: 'bg-sky-500/90 text-white',
+  back:  'bg-emerald-500/90 text-white',
+  db:    'bg-amber-500/90 text-neutral-900',
+  ops:   'bg-fuchsia-500/90 text-white',
+};
+
+// Tools — Herramientas + DevOps del CV. c = color de marca (se usa como punto).
+const tools = [
+  { name: 'Git',        c: '#F05032' },
+  { name: 'Docker',     c: '#2496ED' },
+  { name: 'AWS',        c: '#FF9900' },
+  { name: 'Kubernetes', c: '#326CE5' },
+  { name: 'NGINX',      c: '#009639' },
+  { name: 'Redis',      c: '#DC382D' },
+  { name: 'Prisma',     c: '#5A67D8' },
+  { name: 'Metabase',   c: '#509EE3' },
+  { name: 'n8n',        c: '#EA4B71' },
+  { name: 'Cursor',     c: '#A855F7' },
+  { name: 'PM2',        c: '#8B5CF6' },
+  { name: 'Linux',      c: '#FCC624' },
+];
+---
+
+<section id="skills" class="px-4 md:px-8 my-8">
+  <div class="max-w-7xl mx-auto grid gap-4 items-stretch lg:grid-cols-[1.5fr_1fr]">
+    <!-- Card 1: Skills (pila que cae) -->
+    <div
+      class="skills-card relative flex flex-col overflow-hidden rounded-[2em] bg-neutral-900 text-white p-8 min-h-[32rem]"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-neutral-400 text-lg font-medium">Skills</h2>
+        <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-neutral-500">
+          <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-sky-500"></span>Frontend</span>
+          <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500"></span>Backend</span>
+          <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-amber-500"></span>Data</span>
+          <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-fuchsia-500"></span>DevOps</span>
+        </div>
+      </div>
+
+      <div class="skills-pile relative flex-1 min-h-[22rem] mt-6">
+        {skills.map((s) => (
+          <span
+            class:list={[
+              'skill-pill absolute inline-flex items-center px-5 py-2.5 rounded-full font-semibold text-sm md:text-base whitespace-nowrap shadow-lg will-change-transform',
+              catStyles[s.cat as keyof typeof catStyles],
+            ]}
+            style={`left:${s.x}; bottom:${s.y};`}
+            data-rot={s.rot}
+          >
+            {s.label}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Card 2: Tools (chips limpios, un solo nivel) -->
+    <div class="flex flex-col rounded-[2em] bg-neutral-900 text-white p-8">
+      <h2 class="text-neutral-400 text-lg font-medium">Tools I use</h2>
+      <div class="flex flex-wrap content-start gap-2.5 mt-6">
+        {tools.map((t) => (
+          <span class="tool inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-800/40 px-3.5 py-2 text-sm font-medium text-neutral-200 transition-colors duration-200 hover:border-neutral-500 hover:bg-neutral-800">
+            <span class="h-2.5 w-2.5 rounded-full" style={`background:${t.c}`}></span>
+            {t.name}
+          </span>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(ScrollTrigger)
+
+  const pills = gsap.utils.toArray<HTMLElement>('.skill-pill')
+  gsap.set(pills, { opacity: 0, yPercent: -1400 })
+
+  ScrollTrigger.create({
+    trigger: '.skills-card',
+    start: 'top 75%',
+    once: true,
+    onEnter: () => {
+      pills.forEach((pill, i) => {
+        const rot = Number(pill.dataset.rot) || 0
+        gsap.fromTo(
+          pill,
+          { opacity: 0, yPercent: -1400, rotation: 0 },
+          {
+            opacity: 1,
+            yPercent: 0,
+            rotation: rot,
+            duration: 1.1,
+            ease: 'bounce.out',
+            delay: i * 0.1,
+          }
+        )
+      })
+    },
+  })
+
+  // Tools: entrada escalonada
+  const toolsEls = gsap.utils.toArray<HTMLElement>('.tool')
+  gsap.set(toolsEls, { opacity: 0, y: 16 })
+  ScrollTrigger.create({
+    trigger: '.tool',
+    start: 'top 88%',
+    once: true,
+    onEnter: () => {
+      gsap.to(toolsEls, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power2.out',
+        stagger: 0.04,
+      })
+    },
+  })
+</script>
