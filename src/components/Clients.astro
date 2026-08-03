@@ -1,6 +1,11 @@
 ---
-// Experiencia con empresas (Clients). Datos del CV + LinkedIn.
-// Toda la info está en la card; al hacer hover (o al estar activa) se expande.
+// Experiencia (Clients) — rediseño editorial "trayectoria".
+// Fondo amarillo sólido, tipografía gigante condensada como pieza gráfica,
+// una línea gruesa punteada (SVG) que serpentea entre las tarjetas y un
+// avatar (person_icon) que la recorre con GSAP MotionPath según el scroll,
+// además de parallax multicapa. Datos del CV + LinkedIn.
+import personIcon from '@/assets/person_icon.png'
+
 const linkedin = 'https://www.linkedin.com/in/ivancamilobuitrago/'
 
 const companies = [
@@ -112,297 +117,444 @@ const companies = [
     ],
   },
 ]
+
+// ─────────────────────────────────────────────────────────────────────
+// POSICIÓN DE CADA PARADA SOBRE EL CAMINO  →  edita estos números.
+//   side : lado de anclaje ('left' | 'right')
+//   top  : altura sobre el camino, en vw (más grande = más abajo)
+//   edge : separación desde ese borde, en vw
+//   rot  : giro en grados (estética; 0 = recto)
+// El orden corresponde al de `companies` (01 arriba … 06 abajo).
+// `mapHeight` = alto total del lienzo del camino, en vw.
+const mapHeight = 250
+const stopLayout = [
+  { side: 'right', top: 10, edge: 46, rot: 3 }, // 01 curva a la derecha
+  { side: 'right', top: 65, edge: 57, rot: -2 }, // 02 derecha
+  { side: 'left', top: 104, edge: 64, rot: 3 }, // 03 izquierda
+  { side: 'left', top: 142, edge: 37, rot: -3 }, // 04 derecha
+  { side: 'left', top: 190, edge: 8, rot: 2 }, // 05 izquierda
+  { side: 'right', top: 240, edge: 35, rot: -3 }, // 06 derecha
+]
 ---
 
-<section id="clients" class="clients">
-  <div class="clients-head">
-    <p class="clients-eyebrow">Experiencia</p>
-    <h2 class="clients-title">Empresas con las que he trabajado</h2>
-  </div>
+<section id="clients" class="exp">
+  <div class="exp-shell">
+    <!-- Encabezado editorial: badge + titular gigante + descripción -->
+    <header class="exp-head" data-parallax="head">
+      <span class="exp-badge">Experiencia · 2020 — Hoy</span>
+      <h2 class="exp-title">
+        <span class="exp-title-sm">Mi</span>
+        <span class="exp-title-lg">Trayectoria</span>
+      </h2>
+    </header>
 
-  <div class="timeline">
-    <!-- Camino curvo que conecta las cards -->
-    <svg class="conn" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <clipPath id="conn-reveal" clipPathUnits="userSpaceOnUse">
-          <rect id="conn-rect" x="0" y="0" width="0" height="0"></rect>
-        </clipPath>
-      </defs>
-      <path class="conn-base" fill="none"></path>
-      <path class="conn-glow" fill="none" clip-path="url(#conn-reveal)"></path>
-    </svg>
+    <!-- Ruta serpenteante + paradas distribuidas sobre el camino -->
+    <div class="timeline" style={`--map-h: ${mapHeight}vw`}>
+      <!-- Línea gruesa punteada (path fijo, estirado a toda la sección) -->
+      <svg
+        class="conn"
+        viewBox="0 0 1728 2176"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <mask
+            id="conn-reveal"
+            maskUnits="userSpaceOnUse"
+            x="-300"
+            y="-300"
+            width="2400"
+            height="2900"
+          >
+            <path
+              class="mask-path"
+              fill="none"
+              stroke="#fff"
+              stroke-width="120"
+              stroke-linecap="round"
+              pathLength="1"
+              stroke-dasharray="1 1"
+              stroke-dashoffset="1"
+              d="M864 -60C864 227.5 214 227.5 214 515C214 802.5 1514 802.5 1514 1090C1514 1377.5 214 1377.5 214 1665C214 1952.5 864 1952.5 864 2240"
+            ></path>
+          </mask>
+        </defs>
+        <path
+          class="conn-base"
+          fill="none"
+          d="M864 -60C864 227.5 214 227.5 214 515C214 802.5 1514 802.5 1514 1090C1514 1377.5 214 1377.5 214 1665C214 1952.5 864 1952.5 864 2240"
+        ></path>
+        <path
+          class="conn-glow"
+          fill="none"
+          mask="url(#conn-reveal)"
+          d="M864 -60C864 227.5 214 227.5 214 515C214 802.5 1514 802.5 1514 1090C1514 1377.5 214 1377.5 214 1665C214 1952.5 864 1952.5 864 2240"
+        ></path>
+      </svg>
 
-    {companies.map((c, i) => (
-      <div class={`row ${i % 2 === 0 ? 'left' : 'right'}`} style={`--c: ${c.color}`}>
-        <article class="card" tabindex="0" aria-label={c.name}>
-          <span class="pin"></span>
-          <span class="num">{c.num}</span>
-          <h3 class="name">{c.name}</h3>
-          <p class="role">{c.role}</p>
-          <p class="meta">{c.period} · {c.mode}</p>
-          <p class="short">{c.short}</p>
-          <div class="chips">
-            {c.tech.map((t) => (
-              <span class="chip">{t}</span>
-            ))}
-          </div>
-          <div class="details">
-            <div class="details-inner">
-              <ul class="detail-list">
-                {c.details.map((d) => (
-                  <li>{d}</li>
+      <!-- Avatar que recorre la trayectoria (GSAP MotionPath) -->
+      <img
+        class="traveler"
+        src={personIcon.src}
+        alt="Ivan recorriendo su trayectoria profesional"
+        width="100"
+        height="100"
+        loading="eager"
+        decoding="async"
+      />
+
+      {companies.map((c, i) => {
+        const p = stopLayout[i]
+        return (
+          <article
+            class={`stop ${p.side}`}
+            style={`--c: ${c.color}; --rot: ${p.rot}deg; top: ${p.top}vw; ${p.side}: ${p.edge}vw`}
+            tabindex="0"
+            aria-label={c.name}
+          >
+            <div class="stop-inner">
+              <span class="stop-num">{c.num}</span>
+              <h3 class="stop-name">{c.name}</h3>
+              <p class="stop-role">{c.role}</p>
+              <p class="stop-meta">{c.period} · {c.mode}</p>
+              <p class="stop-desc">{c.short}</p>
+              <ul class="stop-tags">
+                {c.tech.map((t) => (
+                  <li>{t}</li>
                 ))}
               </ul>
-              <a class="detail-link" href={linkedin} target="_blank" rel="noopener noreferrer">
-                Ver perfil en LinkedIn →
-              </a>
             </div>
-          </div>
-        </article>
-      </div>
-    ))}
+          </article>
+        )
+      })}
+    </div>
+
+    <div class="exp-cta">
+      <a class="cta" href={linkedin} target="_blank" rel="noopener noreferrer">
+        <span>Ver perfil completo en LinkedIn</span>
+        <svg width="15" height="10" viewBox="0 0 13 10" aria-hidden="true">
+          <path d="M1,5 L11,5"></path>
+          <polyline points="8 1 12 5 8 9"></polyline>
+        </svg>
+      </a>
+    </div>
   </div>
 </section>
 
 <style>
-  .clients {
-    max-width: 72rem;
-    margin: 5rem auto;
-    padding: 0 1.5rem;
+  /* Sección editorial a sangre completa, fondo amarillo sólido ---------- */
+  .exp {
+    /* --bg: #ffc83d; */
+    --ink: #201400;
+    --path: rgba(70, 44, 0, 0.32);
+    position: relative;
+    width: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    /* padding: clamp(4rem, 9vw, 8rem) 0 clamp(5rem, 10vw, 9rem); */
+    overflow: hidden;
   }
 
-  .clients-head {
-    text-align: center;
-    margin-bottom: 3.5rem;
+  .exp-shell {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 4vw, 3.5rem);
   }
-  .clients-eyebrow {
+
+  /* Encabezado -------------------------------------------------------- */
+  .exp-head {
+    max-width: 46rem;
+    margin: 0 0 clamp(3rem, 7vw, 6rem);
+    will-change: transform;
+  }
+  .exp-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #8b8b8b;
-    margin: 0 0 0.5rem;
+    /* color: var(--ink); */
+    color: rgb(64, 141, 235);
+    /* padding: 0.4rem 0.9rem; */
+    /* border: 1.5px solid rgba(32, 20, 0, 0.35); */
+    border-radius: 999px;
   }
-  .clients-title {
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 0;
-    color: #f5f5f7;
+  .exp-title {
+    margin: 1.25rem 0 0;
+    font-family: 'Anton', 'Archivo Black', 'Hanken Grotesk', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 0.86;
+    letter-spacing: -0.01em; /* tracking ligeramente negativo */
+    /* Relleno blanco + contorno azul pizarra (estilo thumbnail). */
+    color: #fff;
+    -webkit-text-stroke: 0.06em #364a64;
+    paint-order: stroke fill; /* el borde queda debajo del relleno blanco */
+    /* Sombra azul corta y suave, desplazada abajo-derecha. */
+    text-shadow:
+      0.028em 0.04em 0 rgba(40, 55, 78, 0.4),
+      0 0.05em 0.14em rgba(40, 55, 78, 0.22);
+  }
+  .exp-title span {
+    display: block;
+  }
+  .exp-title-sm {
+    font-size: clamp(2.2rem, 7vw, 4rem);
+    opacity: 0.92;
+  }
+  .exp-title-lg {
+    font-size: clamp(3.6rem, 15vw, 11rem);
+  }
+  .exp-lead {
+    max-width: 34rem;
+    margin: 1.75rem 0 0;
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    line-height: 1.55;
+    font-weight: 500;
+    color: rgba(43, 27, 0, 0.82);
   }
 
-  /* Timeline + camino curvo ------------------------------------------- */
+  /* Timeline + ruta --------------------------------------------------- */
+  /* El camino ocupa --map-h; la timeline añade algo más abajo para que la
+     última parada (que cae al final de la curva) tenga aire. */
   .timeline {
     position: relative;
+    /* +38vw = holgura para que la última parada no invada el CTA. */
+    height: calc(var(--map-h, 250vw) + 20vw);
   }
 
   .conn {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 100%;
+    height: var(--map-h, 250vw);
     overflow: visible;
     z-index: 0;
     pointer-events: none;
   }
   .conn-base {
-    stroke: #b3b3b3;
-    stroke-width: 2;
-    stroke-dasharray: 5 5;
+    stroke: #f4a804;
+    stroke-opacity: 0.5;
+    stroke-width: 10;
+    stroke-dasharray: 42 42;
     stroke-linecap: round;
+    stroke-linejoin: round;
     fill: none;
-    shape-rendering: geometricPrecision;
     vector-effect: non-scaling-stroke;
   }
   .conn-glow {
-    stroke: #818cf8;
-    stroke-width: 2;
-    stroke-dasharray: 5 5;
+    stroke: #e08a00;
+    stroke-opacity: 0.9;
+    stroke-width: 10;
+    stroke-dasharray: 42 42;
     stroke-linecap: round;
+    stroke-linejoin: round;
     fill: none;
-    shape-rendering: geometricPrecision;
     vector-effect: non-scaling-stroke;
-    filter: drop-shadow(0 0 5px rgba(129, 140, 248, 0.85));
   }
 
-  .row {
-    position: relative;
-    display: flex;
-    margin-block: 1.75rem;
-  }
-  .row.left {
-    justify-content: flex-start;
-  }
-  .row.right {
-    justify-content: flex-end;
-  }
-
-  /* Card (sticky note) ------------------------------------------------ */
-  .card {
-    position: relative;
-    width: min(46%, 25rem);
-    text-align: left;
-    background: #17171f;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1.25rem;
-    padding: 1.75rem 1.5rem 1.5rem;
-    box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.7);
-    cursor: default;
-    transition:
-      box-shadow 0.35s ease,
-      border-color 0.35s ease;
-    color: #f5f5f7;
-    outline: none;
-    z-index: 1;
-  }
-  .card:hover,
-  .card:focus-within,
-  .row.is-active .card {
-    border-color: color-mix(in srgb, var(--c) 55%, transparent);
-    box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.8);
-  }
-  .row.is-active .card {
-    box-shadow:
-      0 24px 48px -16px rgba(0, 0, 0, 0.8),
-      0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent);
+  /* Foto compartida Skills → Clients (única, posición fija en el viewport).
+     JS controla left/top/width/height/opacity según el scroll. */
+  .traveler {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    object-position: 50% 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    z-index: 1; /* detrás de los textos (.stop = z-index 2) */
+    pointer-events: none;
+    will-change: left, top, width, height, opacity;
   }
 
-  .pin {
+  /* Paradas editoriales distribuidas sobre el camino ------------------ */
+  /* La posición (top + left/right) llega inline desde `stopLayout`. */
+  .stop {
     position: absolute;
-    top: -0.65rem;
-    width: 1.4rem;
-    height: 1.4rem;
-    border-radius: 999px;
-    z-index: 3;
-    background: radial-gradient(
-      circle at 35% 30%,
-      color-mix(in srgb, var(--c) 60%, #fff) 0%,
-      var(--c) 55%,
-      color-mix(in srgb, var(--c) 70%, #000) 100%
-    );
-    box-shadow:
-      0 4px 8px -2px rgba(20, 19, 27, 0.45),
-      inset -1px -1px 3px rgba(0, 0, 0, 0.25);
+    z-index: 2; /* por encima de la foto viajera */
+    width: min(38vw, 27rem);
+    color: #fff;
+    outline: none;
+    transform: rotate(var(--rot, 0deg));
+    transform-origin: center;
   }
-  /* Pin en la esquina interna (del lado del camino) */
-  .row.left .pin {
-    right: -0.55rem;
+  .stop.right {
+    text-align: right;
   }
-  .row.right .pin {
-    left: -0.55rem;
+  .stop.left {
+    text-align: left;
   }
+  /* Envoltorio que anima GSAP (reveal + crossfade); separado del rotate. */
+  .stop-inner {
+    will-change: transform, opacity;
+  }
+  /* Halo del color de fondo para recortar la línea punteada detrás. */
+  /* .stop-num,
+  .stop-name,
+  .stop-role,
+  .stop-meta,
+  .stop-desc {
+    text-shadow:
+      0 0 12px #ffc83d,
+      0 0 24px #ffc83d;
+  } */
 
-  .num {
-    display: inline-block;
-    font-size: 1.5rem;
+  .stop-num {
+    display: block;
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 0.82;
+    letter-spacing: 0.01em;
+    /* color: color-mix(in srgb, var(--c) 42%, #201400); */
+    -webkit-text-stroke: 0;
+  }
+  .stop-name {
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem);
     font-weight: 800;
-    font-style: italic;
-    color: var(--c);
     letter-spacing: -0.02em;
+    line-height: 1.02;
+    margin: 0.3rem 0 0;
+    /* color: #1a1000; */
   }
-  .name {
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 0.15rem 0 0;
+  .stop-role {
+    font-weight: 700;
+    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+    margin: 0.5rem 0 0;
+    color: color-mix(in srgb, var(--c) 55%, #201400);
   }
-  .role {
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin: 0.35rem 0 0;
-    color: #c9c6d6;
+  .stop-meta {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    /* color: rgba(58, 40, 6, 0.62); */
+    margin: 0.6rem 0 0;
   }
-  .meta {
-    font-size: 0.78rem;
-    color: #9a97a8;
-    margin: 0.35rem 0 0;
-  }
-  .short {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: #b8b5c5;
+  .stop-desc {
+    font-size: clamp(0.95rem, 1.35vw, 1.1rem);
+    line-height: 1.55;
+    /* color: #4a3a1e; */
     margin: 0.9rem 0 0;
   }
 
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 1rem;
-  }
-  .chip {
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--c) 22%, transparent);
-    color: color-mix(in srgb, var(--c) 45%, #fff);
-  }
-
-  /* Detalle: siempre visible dentro de la card (sin overlay) ---------- */
-  .details {
-    margin-top: 1.1rem;
-  }
-
-  .detail-list {
-    margin: 0;
-    padding: 1rem 0 0;
+  .stop-tags {
     list-style: none;
     display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    flex-wrap: wrap;
+    gap: 0.45rem 0.5rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
   }
-  .detail-list li {
+  .stop.right .stop-tags {
+    justify-content: flex-end;
+  }
+  .stop.left .stop-tags {
+    justify-content: flex-start;
+  }
+  .stop-tags li {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding: 0.22rem 0.65rem;
+    border-radius: 999px;
+    border: 1.5px solid color-mix(in srgb, var(--c) 45%, transparent);
+    color: color-mix(in srgb, var(--c) 62%, #201400);
+  }
+
+  /* CTA final --------------------------------------------------------- */
+  .exp-cta {
     position: relative;
-    padding-left: 1.1rem;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: #b8b5c5;
+    z-index: 5; /* por encima de las paradas absolutas para que no lo tapen */
+    display: flex;
+    justify-content: center;
+    /* margin-top: clamp(2rem, 5vw, 4rem); */
   }
-  .detail-list li::before {
+  /* Botón animado: la píldora azul clara se expande al hover. */
+  .cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 18px;
+    border: none;
+    background: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cta::before {
     content: '';
     position: absolute;
+    top: 0;
     left: 0;
-    top: 0.5em;
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 999px;
-    background: var(--c);
+    display: block;
+    border-radius: 50px;
+    background: #2a5bc7; /* azul intenso: el texto claro se lee encima */
+    width: 48px;
+    height: 100%;
+    transition: all 0.3s ease;
   }
-  .detail-link {
-    display: inline-block;
-    margin-top: 1rem;
+  /* Texto claro fijo: legible sobre el fondo oscuro Y sobre la píldora azul. */
+  .cta span {
+    position: relative;
     font-weight: 700;
-    font-size: 0.82rem;
-    color: var(--c);
-    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+    color: #eef3ff;
+    white-space: nowrap;
   }
-  .detail-link:hover {
-    text-decoration: underline;
+  .cta svg {
+    position: relative;
+    margin-left: 10px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: #eef3ff;
+    stroke-width: 2;
+    transform: translateX(-5px);
+    transition: all 0.3s ease;
+  }
+  .cta:hover::before {
+    width: 100%;
+    background: #2f6df0; /* un punto más brillante al expandirse */
+  }
+  .cta:hover svg {
+    transform: translateX(0);
+  }
+  .cta:active {
+    transform: scale(0.96);
   }
 
-  /* Responsive -------------------------------------------------------- */
+  /* Responsive: en móvil el camino no cabe -> apilado simple ---------- */
   @media (max-width: 768px) {
-    .row,
-    .row.left,
-    .row.right {
-      justify-content: flex-start;
-      padding-left: 1.5rem;
+    .timeline {
+      height: auto !important;
     }
-    .card,
-    .row.left .card,
-    .row.right .card {
+    .conn,
+    .traveler {
+      display: none;
+    }
+    .stop,
+    .stop.left,
+    .stop.right {
+      position: static !important;
       width: 100%;
-      transform: rotate(0deg);
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      margin: clamp(2.5rem, 9vw, 4rem) 0;
+      text-align: left;
+      transform: none;
     }
-    .row.left .pin,
-    .row.right .pin {
-      left: -0.55rem;
-      right: auto;
+    .stop.right .stop-tags,
+    .stop.left .stop-tags {
+      justify-content: flex-start;
     }
   }
-
 </style>
 
 <script>
@@ -411,121 +563,159 @@ const companies = [
 
   gsap.registerPlugin(ScrollTrigger)
 
-  const timeline = document.querySelector<HTMLElement>('.timeline')
-  const svg = document.querySelector<SVGSVGElement>('.conn')
-  const base = document.querySelector<SVGPathElement>('.conn-base')
-  const glow = document.querySelector<SVGPathElement>('.conn-glow')
-  const rect = document.querySelector<SVGRectElement>('#conn-rect')
-
-  let svgH = 0
-
-  // Puntos de la curva (relativos al ancho de cada card)
-  const START = 0.68 // salida: % del ancho de A, hacia la card siguiente
-  const END = 0.22 // llegada: % del ancho de B, hacia el lado contrario
-  const TUCK = 6 // px que se ocultan bajo el borde de la card
-
-  // Curva Bézier cúbica en "S" asimétrica entre tarjetas alternadas
-  function buildPath(): string {
-    if (!timeline) return ''
-    const origin = timeline.getBoundingClientRect()
-    const rows = Array.from(timeline.querySelectorAll<HTMLElement>('.row'))
-    let d = ''
-
-    for (let i = 0; i < rows.length - 1; i++) {
-      const aCard = rows[i].querySelector<HTMLElement>('.card')
-      const bCard = rows[i + 1].querySelector<HTMLElement>('.card')
-      if (!aCard || !bCard) continue
-
-      const aLeft = rows[i].classList.contains('left')
-      const a = aCard.getBoundingClientRect()
-      const b = bCard.getBoundingClientRect()
-
-      // Salida: borde inferior de A, desplazado hacia la card siguiente
-      const x1 = a.left + (aLeft ? START : 1 - START) * a.width - origin.left
-      const y1 = a.bottom - TUCK - origin.top
-      // Llegada: borde superior de B, desplazado hacia el lado contrario
-      const x2 = b.left + (aLeft ? END : 1 - END) * b.width - origin.left
-      const y2 = b.top + TUCK - origin.top
-
-      // Controles verticales (misma x, ±cv) -> sale y entra vertical, "S" acostada
-      const cv = Math.max(60, (y2 - y1) * 0.6)
-
-      d += `M ${x1} ${y1} C ${x1} ${y1 + cv}, ${x2} ${y2 - cv}, ${x2} ${y2} `
-    }
-    return d
-  }
-
-  function draw() {
-    if (!timeline || !svg || !base || !glow || !rect) return
-    const w = timeline.clientWidth
-    svgH = timeline.clientHeight
-
-    svg.setAttribute('width', String(w))
-    svg.setAttribute('height', String(svgH))
-    svg.setAttribute('viewBox', `0 0 ${w} ${svgH}`)
-    rect.setAttribute('width', String(w))
-
-    const d = buildPath()
-    base.setAttribute('d', d)
-    glow.setAttribute('d', d)
-  }
-
-  draw()
-  requestAnimationFrame(draw)
-  // Redibujos extra por si fuentes/imágenes cambian el layout inicial
-  setTimeout(() => {
-    draw()
-    ScrollTrigger.refresh()
-  }, 250)
-  window.addEventListener('load', () => {
-    draw()
-    ScrollTrigger.refresh()
-  })
-  window.addEventListener('resize', () => {
-    draw()
-    ScrollTrigger.refresh()
-  })
-  if ('fonts' in document) {
-    ;(document as any).fonts.ready.then(() => {
-      draw()
-      ScrollTrigger.refresh()
-    })
-  }
-
-  // Iluminación progresiva del camino según el scroll
-  ScrollTrigger.create({
-    trigger: '.timeline',
-    start: 'top 60%',
-    end: 'bottom 60%',
-    scrub: 0.5,
-    onUpdate: (self) => {
-      if (rect) rect.setAttribute('height', String(self.progress * svgH))
-    },
-  })
-
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-  // Card activa según su posición en pantalla + entrada al hacer scroll
-  gsap.utils.toArray<HTMLElement>('.row').forEach((row) => {
-    ScrollTrigger.create({
-      trigger: row,
-      start: 'top 60%',
-      end: 'bottom 40%',
-      onToggle: (self) => row.classList.toggle('is-active', self.isActive),
-    })
+  const skills = document.querySelector<HTMLElement>('#skills')
+  const timeline = document.querySelector<HTMLElement>('.timeline')
+  const base = document.querySelector<SVGPathElement>('.conn-base')
+  const maskPath = document.querySelector<SVGPathElement>('.mask-path')
+  const img = document.querySelector<HTMLElement>('.traveler')
+  const stops = Array.from(document.querySelectorAll<HTMLElement>('.stop'))
 
-    if (!reduceMotion) {
-      const card = row.querySelector<HTMLElement>('.card')
-      if (card) {
-        gsap.from(card, {
-          opacity: 0,
-          y: 42,
-          duration: 0.7,
-          ease: 'power2.out',
-          immediateRender: false,
-          scrollTrigger: { trigger: row, start: 'top 88%', once: true },
-        })
-      }
+  const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
+  // Punto del trazo (fracción 0..1) convertido a coords de viewport, para
+  // colocar la foto FIJA justo sobre la línea (respeta el estirado del SVG).
+  function pathPointScreen(frac: number) {
+    if (!base) return { x: innerWidth / 2, y: innerHeight / 2 }
+    const L = base.getTotalLength()
+    const p = base.getPointAtLength(clamp(frac, 0, 1) * L)
+    const m = base.getScreenCTM()
+    if (!m) return { x: innerWidth / 2, y: innerHeight / 2 }
+    return { x: m.a * p.x + m.c * p.y + m.e, y: m.b * p.x + m.d * p.y + m.f }
+  }
+
+  function place(x: number, y: number, size: number, opacity: number) {
+    if (!img) return
+    img.style.left = `${x}px`
+    img.style.top = `${y}px`
+    img.style.width = `${size}px`
+    img.style.height = `${size}px`
+    img.style.opacity = String(opacity)
+  }
+
+  // ───────────────────────────────────────────────────────────────────
+  // VELOCIDAD DE LA FOTO SOBRE EL CAMINO  →  AJÚSTALA AQUÍ.
+  // Avanza por LONGITUD del trazo => MISMA velocidad en vertical y horizontal
+  // (sin saltos). El trazo ahora es suave (poca deriva), así que la foto va
+  // exactamente sobre la línea y no se sale del viewport.
+  //   SPEED > 1  -> más lento     ·     SPEED < 1  -> más rápido
+  const SPEED = 1
+  // ───────────────────────────────────────────────────────────────────
+
+  // Estado de la foto según el scroll. Se referencia a la altura en pantalla
+  // de la ENTRADA del trazo (`entryY`), que baja 1:1 con el scroll:
+  //   entryY >= S1      -> Skills: grande y centrada.
+  //   TARGET < entryY<S1-> transición: encoge y baja hacia la entrada.
+  //   entryY <= TARGET  -> Clients: recorre el trazo a velocidad constante.
+  function render() {
+    if (!img || !base || !skills) return
+    const vh = innerHeight
+    const vw = innerWidth
+    const BIG = Math.min(vh * 0.55, vw * 0.42) // tamaño de la foto en Skills
+    const SMALL = vw <= 768 ? 86 : 120
+    const TARGET = vh * 0.5 // altura de enganche al camino (fin de transición)
+    const S1 = vh * 1.6 // arranque de la transición
+
+    const sk = skills.getBoundingClientRect()
+    // Visible SOLO cuando Skills llena el viewport (no flota sobre Projects).
+    const op = clamp(1 - sk.top / (vh * 0.25), 0, 1)
+
+    const entryY = pathPointScreen(0).y // altura en pantalla de la entrada
+
+    // Fase Clients: avanza por LONGITUD del trazo, a velocidad constante, y va
+    // exactamente sobre la línea (pathPointScreen). Con el trazo suave la
+    // deriva es pequeña, así que se mantiene dentro del viewport.
+    if (entryY <= TARGET) {
+      const travel = base.getBoundingClientRect().height * SPEED || 1
+      const frac = clamp((TARGET - entryY) / travel, 0, 1)
+      const pt = pathPointScreen(frac)
+      place(pt.x, pt.y, SMALL, 1)
+      if (maskPath) maskPath.style.strokeDashoffset = String(1 - frac)
+      return
     }
+
+    if (maskPath) maskPath.style.strokeDashoffset = '1'
+
+    // Fase Skills: grande y centrada entre los stickers.
+    if (entryY >= S1) {
+      place(vw / 2, vh * 0.5, BIG, op)
+      return
+    }
+
+    // Transición: del centro a la entrada del trazo. En u=1 coincide con Clients.
+    const u = clamp((S1 - entryY) / (S1 - TARGET), 0, 1)
+    const entry = pathPointScreen(0)
+    const size = lerp(BIG, SMALL, u)
+    const x = lerp(vw / 2, entry.x, u)
+    const y = clamp(lerp(vh * 0.5, entry.y, u), vh * 0.14, vh * 0.92)
+    place(x, y, size, op)
+  }
+
+  // Controlador de la foto compartida (posicionamiento por scroll).
+  let ticking = false
+  const onScroll = () => {
+    if (ticking) return
+    ticking = true
+    requestAnimationFrame(() => {
+      render()
+      ticking = false
+    })
+  }
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', () => {
+    render()
+    ScrollTrigger.refresh()
   })
+  window.addEventListener('load', render)
+  if ('fonts' in document) {
+    ;(document as any).fonts.ready.then(render)
+  }
+  render()
+
+  // Parallax del encabezado (solo si no se pide reducir movimiento).
+  if (!reduceMotion) {
+    const head = document.querySelector<HTMLElement>('[data-parallax="head"]')
+    if (head) {
+      gsap.to(head, {
+        yPercent: 14,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#clients',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+    }
+  }
+
+  // Texto de cada cliente: Scroll Reveal + Scroll Trigger + Crossfade.
+  // Cada bloque aparece (fade + slide) al entrar al viewport y se desvanece al
+  // salir por arriba; como las paradas se solapan en el scroll, una se apaga
+  // mientras la siguiente se enciende (crossfade), atado al scroll (scrub).
+  if (!reduceMotion) {
+    stops.forEach((stop) => {
+      const inner = stop.querySelector<HTMLElement>('.stop-inner')
+      if (!inner) return
+      gsap
+        .timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            trigger: stop,
+            start: 'top 88%',
+            end: 'bottom 12%',
+            scrub: 0.6,
+          },
+        })
+        .fromTo(
+          inner,
+          { autoAlpha: 0, y: 48 },
+          { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+        )
+        .to(inner, { duration: 0.25 }) // sostiene la vista legible en el centro
+        .to(inner, { autoAlpha: 0, y: -48, duration: 0.35, ease: 'power2.in' })
+    })
+  }
 </script>
