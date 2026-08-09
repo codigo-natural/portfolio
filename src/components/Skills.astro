@@ -3,32 +3,53 @@
 // La FOTO (person_icon) NO vive aquí: es un único elemento compartido,
 // controlado desde Clients, que aparece grande en este centro y se encoge/baja
 // con el scroll hasta convertirse en el avatar que recorre la trayectoria.
-// Aquí solo van las píldoras de skills/tools, que flotan suavemente.
+// Aquí van el encabezado (titular + lead + chip) y las píldoras de
+// skills/tools, que flotan suavemente alrededor de la foto.
 
 // Cada píldora: text · c (color de marca) · sz (tamaño, vw) · tx (vw) · ty (vh) · rot
 // tx/ty = desplazamiento desde el centro (donde está la foto).
-// Distribución en ÓVALO alrededor de la foto (posiciones tipo reloj, radios
-// variados para que se vea orgánico). Los nombres largos van arriba/abajo al
-// centro (donde hay ancho); los cortos, en los laterales.
+// Distribución en DOS COLUMNAS laterales (zig-zag de radios): nada queda
+// debajo de la foto ni en la franja superior central, que es donde van el
+// titular y el cuerpo de la foto. En móvil estas posiciones se ignoran y las
+// píldoras se reordenan en una nube fluida (ver media query).
 const stickers = [
-  { text: 'PostgreSQL', c: '#5B8DEF', sz: 2.0, tx: 0, ty: -34, rot: -3 }, // 12h
-  { text: 'Next.js', c: '#E2E8F0', sz: 2.2, tx: 19, ty: -29, rot: 5 }, // 1h
-  { text: 'Node.js', c: '#8CC84B', sz: 2.4, tx: 30, ty: -13, rot: -6 }, // 2h
-  { text: 'AWS', c: '#FF9900', sz: 2.2, tx: 34, ty: 4, rot: 4 }, // 3h
-  { text: 'NestJS', c: '#E0234E', sz: 2.0, tx: 29, ty: 19, rot: -5 }, // 4h
-  { text: 'Docker', c: '#2496ED', sz: 2.2, tx: 18, ty: 31, rot: 6 }, // 5h
-  { text: 'TypeScript', c: '#3178C6', sz: 2.2, tx: -2, ty: 36, rot: -3 }, // 6h
-  { text: 'MongoDB', c: '#4DB33D', sz: 2.0, tx: -19, ty: 30, rot: 5 }, // 7h
-  { text: 'Redis', c: '#F0503A', sz: 1.9, tx: -30, ty: 16, rot: -6 }, // 8h
-  { text: 'Git', c: '#F05032', sz: 1.9, tx: -35, ty: 2, rot: 6 }, // 9h
-  { text: 'Tailwind', c: '#38BDF8', sz: 2.1, tx: -30, ty: -14, rot: -5 }, // 10h
-  { text: 'React', c: '#61DAFB', sz: 2.6, tx: -19, ty: -30, rot: 7 }, // 11h
+  // ── lado izquierdo (de arriba hacia abajo)
+  { text: 'Vue / Nuxt', c: '#42B883', sz: 1.9, tx: -22, ty: -33, rot: -4 },
+  { text: 'React', c: '#61DAFB', sz: 2.5, tx: -37, ty: -25, rot: 6 },
+  { text: 'Next.js', c: '#E2E8F0', sz: 2.1, tx: -28, ty: -15, rot: -3 },
+  { text: 'TypeScript', c: '#3178C6', sz: 2.2, tx: -39, ty: -6, rot: 4 },
+  { text: 'Node.js', c: '#8CC84B', sz: 2.3, tx: -29, ty: 4, rot: -5 },
+  { text: 'NestJS', c: '#E0234E', sz: 2.0, tx: -38, ty: 13, rot: 5 },
+  { text: 'Express', c: '#CBD5E1', sz: 1.9, tx: -28, ty: 22, rot: -3 },
+  { text: 'PostgreSQL', c: '#5B8DEF', sz: 2.0, tx: -39, ty: 31, rot: 4 },
+  { text: 'MongoDB', c: '#4DB33D', sz: 1.9, tx: -23, ty: 33, rot: -5 },
+  // ── lado derecho (de arriba hacia abajo)
+  { text: 'Kubernetes', c: '#326CE5', sz: 1.9, tx: 22, ty: -33, rot: 4 },
+  { text: 'n8n', c: '#EA4B71', sz: 1.9, tx: 37, ty: -25, rot: -6 },
+  { text: 'Astro', c: '#FF5D01', sz: 2.0, tx: 28, ty: -15, rot: 3 },
+  { text: 'Tailwind', c: '#38BDF8', sz: 2.1, tx: 39, ty: -6, rot: -4 },
+  { text: 'GraphQL', c: '#E535AB', sz: 2.0, tx: 29, ty: 4, rot: 5 },
+  { text: 'Prisma', c: '#94A3B8', sz: 1.9, tx: 38, ty: 13, rot: -5 },
+  { text: 'AWS', c: '#FF9900', sz: 2.2, tx: 28, ty: 22, rot: 3 },
+  { text: 'Docker', c: '#2496ED', sz: 2.1, tx: 39, ty: 31, rot: -4 },
+  { text: 'Redis', c: '#F0503A', sz: 1.9, tx: 23, ty: 33, rot: 5 },
 ]
 ---
 
 <section id="skills" class="skills">
   <div class="skills-pin">
-    <p class="skills-eyebrow">Stack &amp; herramientas</p>
+    <!-- Encabezado (referencia): titular con palabras resaltadas + lead + chip -->
+    <header class="skills-head">
+      <p class="skills-eyebrow">Stack &amp; herramientas</p>
+      <h2 class="skills-title">
+        Construyo <span class="hl hl-y">producto</span> de
+        <span class="hl hl-b">punta a punta</span>
+      </h2>
+      <p class="skills-lead">
+        Del diseño de la interfaz al despliegue: frontend moderno, APIs sólidas,
+        datos bien modelados y automatizaciones que ahorran horas.
+      </p>
+    </header>
 
     <div class="skills-stage">
       <!-- El hueco central lo ocupa la foto compartida (posición fija),
@@ -68,17 +89,86 @@ const stickers = [
     );
   }
 
-  .skills-eyebrow {
+  /* Encabezado centrado arriba, sobre la foto ------------------------- */
+  .skills-head {
     position: absolute;
-    top: clamp(1.5rem, 5vh, 3rem);
+    top: clamp(1.5rem, 5vh, 3.5rem);
     left: 50%;
     transform: translateX(-50%);
+    z-index: 4;
+    width: min(92vw, 44rem);
+    text-align: center;
+    pointer-events: none;
+  }
+  .skills-eyebrow {
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.22em;
     font-size: 0.72rem;
-    font-weight: 600;
-    color: #7c7a89;
+    font-weight: 700;
+    color: rgb(64, 141, 235);
+  }
+  .skills-title {
+    margin: 0.9rem 0 0;
+    font-family: 'Anton', 'Archivo Black', 'Hanken Grotesk', sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    /* Con interlineado justo, el bloque de color de una línea rozaba la
+       siguiente; 1.18 le da aire vertical. */
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    font-size: clamp(1.9rem, 5vw, 3.6rem);
+    color: #fff;
+    -webkit-text-stroke: 0.03em #364a64;
+    paint-order: stroke fill;
+    text-shadow:
+      0.028em 0.04em 0 rgba(40, 55, 78, 0.4),
+      0 0.05em 0.14em rgba(40, 55, 78, 0.22);
+  }
+  /* Palabras "resaltadas" con marcador, como en la referencia. */
+  .hl {
+    position: relative;
+    display: inline-block;
+    padding: 0 0.32em;
+    color: #16162a;
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+  }
+  /* El bloque de color se extiende por fuera de la caja del texto para que la
+     palabra respire (arriba, abajo y a los lados). */
+  .hl::before {
+    content: '';
+    position: absolute;
+    inset: -0.06em -0.04em -0.04em;
+    border-radius: 0.2em;
+    background: var(--hl);
+    transform: rotate(-1.2deg);
+    z-index: -1;
+  }
+  .hl-y {
+    --hl: #ffd93d;
+  }
+  .hl-b {
+    --hl: #7cc6ff;
+  }
+  .skills-lead {
+    margin: 1.1rem auto 0;
+    max-width: 34rem;
+    font-size: clamp(0.9rem, 1.3vw, 1.05rem);
+    line-height: 1.55;
+    color: #a9a8b8;
+  }
+  .skills-chip {
+    display: inline-block;
+    margin-top: 1.1rem;
+    padding: 0.5rem 1.3rem;
+    border-radius: 999px;
+    background: #16161f;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #f2f1f7;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 14px 28px -16px rgba(0, 0, 0, 0.9);
   }
 
   /* Punto central: ancla de referencia (la foto va aparte). */
@@ -119,9 +209,50 @@ const stickers = [
     will-change: transform;
   }
 
+  /* Móvil: la foto compartida se oculta (ver Clients), así que la nube
+     absoluta se convierte en un flujo normal — encabezado arriba y las
+     píldoras envueltas debajo, sin pin ni scroll extra. */
   @media (max-width: 768px) {
+    .skills {
+      height: auto;
+    }
+    .skills-pin {
+      position: relative;
+      height: auto;
+      min-height: 100svh;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: clamp(4rem, 12vh, 6rem) 1.25rem clamp(3rem, 8vh, 5rem);
+    }
+    .skills-head {
+      position: static;
+      transform: none;
+      width: 100%;
+    }
+    .skills-title {
+      font-size: clamp(1.7rem, 8vw, 2.4rem);
+    }
+    .skills-lead {
+      font-size: 0.9rem;
+    }
+    .skills-stage {
+      width: 100%;
+      height: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .sticker {
+      position: static;
+      top: auto;
+      left: auto;
+      transform: rotate(var(--rot));
+    }
     .sticker-inner {
-      font-size: clamp(0.78rem, calc(var(--sz) * 1.4vw + 0.3rem), 1.15rem);
+      font-size: clamp(0.72rem, 3.4vw, 0.95rem);
       padding: 0.38em 0.85em;
     }
   }
@@ -156,6 +287,16 @@ const stickers = [
       duration: 0.6,
       ease: 'back.out(1.7)',
       stagger: { amount: 0.7, from: 'center' },
+      scrollTrigger: { trigger: '.skills', start: 'top 70%', once: true },
+    })
+
+    // El encabezado entra desde arriba junto con las píldoras.
+    gsap.from('.skills-head > *', {
+      y: -24,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out',
+      stagger: 0.08,
       scrollTrigger: { trigger: '.skills', start: 'top 70%', once: true },
     })
   }

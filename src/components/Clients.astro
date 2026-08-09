@@ -119,6 +119,35 @@ const companies = [
 ]
 
 // ─────────────────────────────────────────────────────────────────────
+// GARABATO DE MARCADOR detrás de CADA TARJETA (estilo rotulador: curvas
+// suaves, punta redonda, color plano, sin textura). Un trazo continuo recorre
+// el bloque de arriba abajo — no es un subrayado por línea ni una mancha que
+// rellene el rectángulo.
+//
+// Clave del acabado: el SVG NO se deforma. Antes se estiraba con
+// `preserveAspectRatio="none"` y, al ajustarse a la caja de cada tarjeta, el
+// mismo `stroke-width` se veía gordísimo en los tramos verticales y fino en
+// los horizontales. Ahora se escala de forma uniforme (`background-size:
+// cover`), así que el grosor del rotulador es constante en todo el recorrido.
+// Apaga el color de marca hacia un gris azulado: el trazo no debe competir con
+// el texto, así que se usa una versión desaturada, no el color vivo.
+const mute = (hex: string, amount = 0.62) => {
+  const n = parseInt(hex.slice(1), 16)
+  const mix = (c: number, g: number) => Math.round(c + (g - c) * amount)
+  const r = mix((n >> 16) & 255, 122)
+  const g = mix((n >> 8) & 255, 120)
+  const b = mix(n & 255, 134)
+  return `rgb(${r},${g},${b})`
+}
+
+// Recorrido continuo, de una sola pasada: entra por arriba a la izquierda,
+// barre a la derecha, vuelve por debajo, baja y cierra abajo. Sin cortes.
+// Va como SVG inline (no como background-image) para poder animar el dibujado
+// del trazo con stroke-dashoffset al entrar la tarjeta al viewport.
+const scribbleD =
+  'M20 60C74 28 192 24 270 44C314 55 306 88 238 98C164 109 72 96 32 116C2 131 44 158 128 160C208 162 290 146 302 172C314 199 244 218 152 216C104 215 62 220 38 232'
+
+// ─────────────────────────────────────────────────────────────────────
 // POSICIÓN DE CADA PARADA SOBRE EL CAMINO  →  edita estos números.
 //   side : lado de anclaje ('left' | 'right')
 //   top  : altura sobre el camino, en vw (más grande = más abajo)
@@ -214,6 +243,23 @@ const stopLayout = [
             aria-label={c.name}
           >
             <div class="stop-inner">
+              <svg
+                class="stop-brush"
+                viewBox="0 0 320 260"
+                preserveAspectRatio="xMidYMid meet"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d={scribbleD}
+                  fill="none"
+                  stroke={mute(c.color)}
+                  stroke-opacity="0.3"
+                  stroke-width="24"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
               <span class="stop-num">{c.num}</span>
               <h3 class="stop-name">{c.name}</h3>
               <p class="stop-role">{c.role}</p>
@@ -389,9 +435,28 @@ const stopLayout = [
   .stop.left {
     text-align: left;
   }
-  /* Envoltorio que anima GSAP (reveal + crossfade); separado del rotate. */
+  /* Envoltorio que anima GSAP (reveal + crossfade); separado del rotate.
+     También es el lienzo del trazo de brocha: UNA sola mancha grande detrás de
+     toda la tarjeta. El padding generoso hace que la pintura sobresalga bien
+     por fuera del texto en los cuatro lados. */
   .stop-inner {
     will-change: transform, opacity;
+    padding: clamp(1.4rem, 2.4vw, 2.4rem) clamp(1.5rem, 2.6vw, 2.6rem)
+      clamp(1.6rem, 2.8vw, 2.8rem);
+    position: relative;
+  }
+  /* El garabato ocupa una caja MÁS GRANDE que la tarjeta: así los extremos del
+     trazo se salen del bloque de texto en vez de quedar cortados por su ancho.
+     `preserveAspectRatio="xMidYMid meet"` mantiene el escalado uniforme, o sea
+     grosor constante y recorrido completo, sin recortes. */
+  .stop-brush {
+    position: absolute;
+    inset: -9% -13%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+    overflow: visible;
+    pointer-events: none;
   }
   /* Halo del color de fondo para recortar la línea punteada detrás. */
   /* .stop-num,
@@ -425,7 +490,8 @@ const stopLayout = [
     font-weight: 700;
     font-size: clamp(0.95rem, 1.4vw, 1.1rem);
     margin: 0.5rem 0 0;
-    color: color-mix(in srgb, var(--c) 55%, #201400);
+    /* Tinte claro del color de marca: legible sobre la mancha de pintura. */
+    color: color-mix(in srgb, var(--c) 22%, #fff);
   }
   .stop-meta {
     font-size: 0.74rem;
@@ -689,6 +755,24 @@ const stopLayout = [
         },
       })
     }
+  }
+
+  // Garabato: se DIBUJA al entrar la tarjeta al viewport (SVG path drawing).
+  // El trazo arranca oculto vía stroke-dashoffset = largo total y se descubre
+  // hasta 0, así parece trazado con rotulador. Una sola vez por tarjeta.
+  if (!reduceMotion) {
+    stops.forEach((stop) => {
+      const path = stop.querySelector<SVGPathElement>('.stop-brush path')
+      if (!path) return
+      const len = path.getTotalLength()
+      gsap.set(path, { strokeDasharray: len, strokeDashoffset: len })
+      gsap.to(path, {
+        strokeDashoffset: 0,
+        duration: 1.2,
+        ease: 'power2.out',
+        scrollTrigger: { trigger: stop, start: 'top 82%', once: true },
+      })
+    })
   }
 
   // Texto de cada cliente: Scroll Reveal + Scroll Trigger + Crossfade.

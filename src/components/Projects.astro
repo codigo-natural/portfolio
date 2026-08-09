@@ -89,11 +89,13 @@ const pad = (n: number) => String(n).padStart(2, '0')
     width: 100%;
     max-width: 82rem;
     margin: 0 auto;
+    margin-right: 0;  
     padding: 0 2.5rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
     gap: 3rem;
+    padding-right: 0;
   }
 
   /* Texto ------------------------------------------------------------- */
@@ -190,9 +192,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
   .p-window {
     position: relative;
     height: 68vh;
-    border-radius: 1.5rem;
     overflow: hidden;
-    /* border: 1px solid rgba(255, 255, 255, 0.1); */
     box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
   }
   /* Patrón de fondo animado (matriz de puntos + partículas azules) ----- */
@@ -346,7 +346,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
     z-index: 2;
     border-radius: 1rem;
     pointer-events: none;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+    /* box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset; */
   }
 
   /* Responsive: sin pin, stack normal --------------------------------- */

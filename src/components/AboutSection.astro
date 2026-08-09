@@ -92,7 +92,7 @@ const recentActivity = repos.filter(repo => new Date(repo.updated_at) > thirtyDa
                         {featuredRepo.stargazers_count}
                     </span>
                 </div>
-                <span class="grid place-items-center h-16 w-16 rounded-full bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12">
+                <span data-magnetic class="grid place-items-center h-16 w-16 rounded-full bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"/>
                     </svg>
@@ -104,15 +104,15 @@ const recentActivity = repos.filter(repo => new Date(repo.updated_at) > thirtyDa
                 <span class="card-eyebrow text-yellow-700">GitHub</span>
                 <div class="grid grid-cols-3 gap-3">
                     <div class="flex flex-col">
-                        <span class="stat-value">{githubUser.public_repos}</span>
+                        <span class="stat-value" data-count={githubUser.public_repos}>{githubUser.public_repos}</span>
                         <span class="stat-label">Repos</span>
                     </div>
                     <div class="flex flex-col">
-                        <span class="stat-value">{totalStars}</span>
+                        <span class="stat-value" data-count={totalStars}>{totalStars}</span>
                         <span class="stat-label">Stars</span>
                     </div>
                     <div class="flex flex-col">
-                        <span class="stat-value">{yearsOnGithub}</span>
+                        <span class="stat-value" data-count={yearsOnGithub}>{yearsOnGithub}</span>
                         <span class="stat-label">Años</span>
                     </div>
                 </div>
@@ -127,7 +127,7 @@ const recentActivity = repos.filter(repo => new Date(repo.updated_at) > thirtyDa
 
         <!-- Row 3: Bottom Cards Row -->
         <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <a href="#clients" class="card brackets bg-purple-100 text-purple-900 gap-4 group transition-all hover:bg-purple-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer">
+            <a href="#clients" class="card brackets bg-purple-100 text-purple-900 gap-4 group transition-colors hover:bg-purple-200 cursor-pointer">
                 <div class="flex items-center justify-between">
                     <h3 class="card-title text-purple-900">Clients</h3>
                     <span class="text-purple-500 transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
@@ -182,21 +182,130 @@ const recentActivity = repos.filter(repo => new Date(repo.updated_at) > thirtyDa
     </div>
 </div>
 
+<style>
+  /* Sombra/glow del hover: SOLO en las cards que son enlaces (clickeables).
+     Las informativas no reaccionan, para no prometer una acción que no existe.
+     El movimiento lo hace GSAP, no CSS, para no pelear con el tilt (ambos
+     escriben `transform`). */
+  #about a.card {
+    transition: box-shadow 0.35s ease, filter 0.35s ease;
+  }
+  #about a.card:hover {
+    box-shadow: 0 26px 50px -22px rgba(0, 0, 0, 0.75);
+    filter: saturate(1.06) brightness(1.02);
+  }
+</style>
+
 <script>
   import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-  // About es la primera sección (visible al cargar): animamos en load,
-  // sin ScrollTrigger, para no dejar cards en opacity:0 si no dispara.
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const cards = gsap.utils.toArray<HTMLElement>('#about .card')
-    gsap.from(cards, {
-      opacity: 0,
-      y: 28,
-      duration: 0.6,
-      ease: 'power2.out',
-      stagger: 0.08,
-      delay: 0.15,
-      clearProps: 'opacity,transform',
+  gsap.registerPlugin(ScrollTrigger)
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const cards = gsap.utils.toArray<HTMLElement>('#about .card')
+
+  if (!reduceMotion) {
+    // 1) Scroll reveal por lotes: cada card entra al cruzar el 88% del
+    //    viewport, en grupos (stagger corto). Las que ya son visibles al
+    //    cargar disparan de inmediato, así que sirve igual como animación de
+    //    carga. `once` evita que se repita al volver a subir.
+    gsap.set(cards, { opacity: 0, y: 26, scale: 0.985 })
+    ScrollTrigger.batch(cards, {
+      start: 'top 88%',
+      once: true,
+      onEnter: (batch) =>
+        gsap.to(batch, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.55,
+          ease: 'power2.out',
+          stagger: 0.07,
+          clearProps: 'transform',
+        }),
+    })
+    // Red de seguridad: si algo impidiera que el trigger dispare, las cards
+    // no se quedan invisibles.
+    window.addEventListener('load', () => {
+      ScrollTrigger.refresh()
+      gsap.to(
+        cards.filter((c) => Number(getComputedStyle(c).opacity) === 0 && c.getBoundingClientRect().top < innerHeight),
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.05 }
+      )
+    })
+
+    // 2) Count-up de las métricas de GitHub, al entrar su card al viewport.
+    gsap.utils.toArray<HTMLElement>('#about [data-count]').forEach((el) => {
+      const end = Number(el.dataset.count || 0)
+      if (!end) return
+      const obj = { v: 0 }
+      el.textContent = '0'
+      gsap.to(obj, {
+        v: end,
+        duration: 1.2,
+        ease: 'power2.out',
+        onUpdate: () => {
+          el.textContent = String(Math.round(obj.v))
+        },
+        scrollTrigger: { trigger: el.closest('.card') ?? el, start: 'top 85%', once: true },
+      })
+    })
+
+    // 3) Tilt 3D + hover lift, SOLO en las cards clickeables (las que son <a>)
+    //    y con puntero fino. Las informativas se quedan quietas.
+    if (window.matchMedia('(pointer: fine)').matches) {
+      gsap.utils.toArray<HTMLElement>('#about a.card').forEach((card) => {
+        const rotX = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power3.out' })
+        const rotY = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power3.out' })
+        const lift = gsap.quickTo(card, 'y', { duration: 0.4, ease: 'power3.out' })
+
+        // La perspectiva se aplica al entrar (la animación de entrada termina
+        // con clearProps y borraría un transform puesto antes de tiempo).
+        card.addEventListener('pointerenter', () => {
+          gsap.set(card, { transformPerspective: 900 })
+        })
+        card.addEventListener('pointermove', (e) => {
+          const r = card.getBoundingClientRect()
+          const px = (e.clientX - r.left) / r.width - 0.5
+          const py = (e.clientY - r.top) / r.height - 0.5
+          rotY(px * 7)
+          rotX(-py * 7)
+          lift(-6)
+        })
+        card.addEventListener('pointerleave', () => {
+          rotX(0)
+          rotY(0)
+          lift(0)
+        })
+      })
+    }
+
+    // 4) Efecto magnético: el círculo de la flecha persigue al cursor.
+    gsap.utils.toArray<HTMLElement>('#about [data-magnetic]').forEach((el) => {
+      const zone = el.closest<HTMLElement>('.card') ?? el
+      const mx = gsap.quickTo(el, 'x', { duration: 0.5, ease: 'power3.out' })
+      const my = gsap.quickTo(el, 'y', { duration: 0.5, ease: 'power3.out' })
+
+      zone.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect()
+        const dx = e.clientX - (r.left + r.width / 2)
+        const dy = e.clientY - (r.top + r.height / 2)
+        const dist = Math.hypot(dx, dy)
+        const radius = 220
+        if (dist > radius) {
+          mx(0)
+          my(0)
+          return
+        }
+        const pull = 1 - dist / radius
+        mx(dx * 0.28 * pull)
+        my(dy * 0.28 * pull)
+      })
+      zone.addEventListener('pointerleave', () => {
+        mx(0)
+        my(0)
+      })
     })
   }
 </script>

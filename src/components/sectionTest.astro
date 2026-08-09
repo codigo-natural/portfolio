@@ -92,24 +92,26 @@ import profileImage from "@/assets/personal.png";
     </div>
 
     <header
+        id="hero-card"
         class="max-w-[50em] mx-auto bg-[#183fad] text-white p-6 sm:p-10 rounded-tl-4xl rounded-b-4xl relative z-0 overflow-hidden flex flex-col min-h-[46rem] lg:min-h-[54rem]">
-        <!-- TOP: nombre -->
-        <div class="relative z-40 st-fade">
+        <!-- TOP: nombre (text reveal por líneas) -->
+        <div class="relative z-40">
             <h1 class="font-bold leading-[1.02] text-3xl sm:text-4xl lg:text-5xl">
-                I'm
-                <span class="block">Ivan Camilo</span>
-                <span class="block">Buitrago</span>
+                <span class="hero-line block overflow-hidden pb-[0.14em] -mb-[0.14em]"><span class="hero-line-in block">I'm</span></span>
+                <span class="hero-line block overflow-hidden pb-[0.14em] -mb-[0.14em]"><span class="hero-line-in block">Ivan Camilo</span></span>
+                <span class="hero-line block overflow-hidden pb-[0.14em] -mb-[0.14em]"><span class="hero-line-in block">Buitrago</span></span>
             </h1>
         </div>
 
-        <!-- "Developer" DETRÁS del retrato -->
-        <h2 class="absolute left-1/2 -translate-x-1/2 top-[30%] z-10 text-center font-bold leading-[0.85] tracking-tight text-[clamp(3rem,11vw,9rem)] text-white/85 pointer-events-none select-none">
+        <!-- "Developer" DETRÁS del retrato (parallax lento al hacer scroll) -->
+        <h2 id="hero-word" class="absolute left-1/2 -translate-x-1/2 top-[30%] z-10 text-center font-bold leading-[0.85] tracking-tight text-[clamp(3rem,11vw,9rem)] text-white/85 pointer-events-none select-none">
             Developer
         </h2>
 
-        <!-- Retrato AL FRENTE (z-20), más grande, con float -->
-        <div class="absolute left-1/2 -translate-x-1/2 bottom-0 z-20 pointer-events-none">
+        <!-- Retrato AL FRENTE (z-20): clip reveal de entrada + parallax -->
+        <div id="hero-portrait" class="absolute left-1/2 -translate-x-1/2 bottom-0 z-20 pointer-events-none">
             <img
+                id="hero-img"
                 src={profileImage.src}
                 alt="Ivan Camilo Buitrago"
                 class="select-none w-[96vw] max-w-[28rem] sm:w-[26rem] sm:max-w-none lg:w-[28rem] object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_82%,transparent)]"
@@ -118,7 +120,7 @@ import profileImage from "@/assets/personal.png";
         </div>
 
         <!-- BOTTOM: email + badge -->
-        <section class="relative z-40 mt-auto flex items-end justify-between gap-4 st-fade">
+        <section id="hero-foot" class="relative z-40 mt-auto flex items-end justify-between gap-4">
             <a
                 href="mailto:buitragoivancamilo1025@gmail.com"
                 class="inline-flex w-fit items-center gap-2 py-1 text-base sm:text-lg font-medium hover:opacity-80 transition border-b-2 border-dashed border-white/80 break-all"
@@ -153,21 +155,6 @@ import profileImage from "@/assets/personal.png";
 
 <style>
 
-  /* Entrada de los textos */
-  @keyframes st-fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  .st-fade {
-    animation: st-fade-up 0.8s ease-out both;
-  }
-
   /* Menú móvil */
   .mobile-menu {
     display: none;
@@ -190,6 +177,80 @@ import profileImage from "@/assets/personal.png";
 
 <script>
   import gsap from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+  gsap.registerPlugin(ScrollTrigger)
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  if (!reduceMotion) {
+    const card = document.getElementById('hero-card')
+    const portrait = document.getElementById('hero-portrait')
+    const img = document.getElementById('hero-img')
+    const word = document.getElementById('hero-word')
+
+    // Ambos elementos están centrados con `-translate-x-1/2` (clase Tailwind).
+    // GSAP reescribe el transform completo, así que ese centrado pasa a ser
+    // xPercent -50 antes de animar nada más.
+    if (portrait) gsap.set(portrait, { xPercent: -50 })
+    if (word) gsap.set(word, { xPercent: -50 })
+
+    // 1) Text reveal: cada línea del nombre sube desde su máscara.
+    gsap.from('.hero-line-in', {
+      yPercent: 115,
+      duration: 0.8,
+      ease: 'power3.out',
+      stagger: 0.09,
+      delay: 0.1,
+    })
+
+    // 2) Clip reveal del retrato: se descubre de abajo hacia arriba.
+    if (img) {
+      gsap.fromTo(
+        img,
+        { clipPath: 'inset(100% 0% 0% 0%)', y: 24 },
+        {
+          clipPath: 'inset(0% 0% 0% 0%)',
+          y: 0,
+          duration: 1.1,
+          ease: 'power3.out',
+          delay: 0.25,
+        }
+      )
+    }
+
+    // 2b) Pie de la tarjeta (email + sello): scroll reveal, porque queda por
+    //     debajo del fold en la mayoría de pantallas.
+    const foot = document.getElementById('hero-foot')
+    if (foot) {
+      gsap.from(foot.children, {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        ease: 'power2.out',
+        stagger: 0.1,
+        scrollTrigger: { trigger: foot, start: 'top 92%', once: true },
+      })
+    }
+
+    // 3) Parallax con scrub: la palabra "Developer" y el retrato se mueven a
+    //    distinta velocidad mientras la tarjeta atraviesa el viewport.
+    if (card && word) {
+      gsap.to(word, {
+        yPercent: -22,
+        ease: 'none',
+        scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true },
+      })
+    }
+    if (card && portrait) {
+      gsap.to(portrait, {
+        y: 40,
+        ease: 'none',
+        scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true },
+      })
+    }
+
+  }
 
   const toggle = document.getElementById('menu-toggle')
   const menu = document.getElementById('mobile-menu')
